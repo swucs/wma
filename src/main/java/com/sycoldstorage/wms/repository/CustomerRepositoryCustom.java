@@ -6,5 +6,5 @@ import com.sycoldstorage.wms.dto.SearchCustomerCondition;
 import java.util.List;
 
 public interface CustomerRepositoryCustom {
-    List<CustomerDto> searchPageSimple(SearchCustomerCondition condition);
+    List<CustomerDto> searchCustomers(SearchCustomerCondition condition);
 }

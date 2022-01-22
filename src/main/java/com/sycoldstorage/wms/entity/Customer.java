@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import com.sycoldstorage.wms.dto.CustomerDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +21,8 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @ToString
+@Entity
 public class Customer {
 
     @Id
@@ -53,5 +55,55 @@ public class Customer {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    public Customer(CustomerDto customerDto) {
+        changeCustomer(customerDto);
+        this.deleted = false;
+    }
+
+
+    /**
+     * 삭제 플래그 처리
+     */
+    public void remove() {
+        this.deleted = true;
+    }
+
+    /**
+     * 거래처 정보 수정
+     * @param customerDto
+     */
+    public void changeCustomer(CustomerDto customerDto) {
+        this.name = customerDto.getName();
+        this.businessNumber = customerDto.getBusinessNumber();
+        this.representativeName = customerDto.getRepresentativeName();
+        this.businessConditions = customerDto.getBusinessConditions();
+        this.typeOfBusiness = customerDto.getTypeOfBusiness();
+        this.address = customerDto.getAddress();
+        this.phoneNumber = customerDto.getPhoneNumber();
+        this.faxNumber = customerDto.getFaxNumber();
+        this.use = customerDto.isUse();
+    }
+
+    /**
+     * Dto 반환
+     * @return
+     */
+    public CustomerDto toCustomerDto() {
+        return CustomerDto.builder()
+                .id(this.id)
+                .name(this.name)
+                .businessNumber(this.businessNumber)
+                .representativeName(this.representativeName)
+                .businessConditions(this.businessConditions)
+                .typeOfBusiness(this.typeOfBusiness)
+                .address(this.address)
+                .phoneNumber(this.phoneNumber)
+                .faxNumber(this.faxNumber)
+                .use(this.use)
+                .build();
+    }
+
+
 }
 

@@ -23,7 +23,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     }
 
     @Override
-    public List<CustomerDto> searchPageSimple(SearchCustomerCondition condition) {
+    public List<CustomerDto> searchCustomers(SearchCustomerCondition condition) {
 
         return queryFactory
                 .select(new QCustomerDto(

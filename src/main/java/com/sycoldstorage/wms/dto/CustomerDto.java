@@ -1,9 +1,11 @@
 package com.sycoldstorage.wms.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class CustomerDto {
     private Long id;
     private String name;
