@@ -7,12 +7,13 @@ import com.sycoldstorage.wms.exception.NoSuchDataException;
 import com.sycoldstorage.wms.repository.CustomerRepository;
 import com.sycoldstorage.wms.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-
+@Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 

@@ -4,8 +4,6 @@ import com.sycoldstorage.wms.dto.CustomerDto;
 import com.sycoldstorage.wms.dto.SearchCustomerCondition;
 import com.sycoldstorage.wms.entity.Customer;
 import com.sycoldstorage.wms.exception.NoSuchDataException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import javax.transaction.Transactional;
 import java.util.List;
