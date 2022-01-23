@@ -4,6 +4,7 @@ package com.sycoldstorage.wms.entity;
 import com.sycoldstorage.wms.dto.CustomerDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -22,6 +23,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode(of="id")
 @Entity
 public class Customer {
 

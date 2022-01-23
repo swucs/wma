@@ -59,6 +59,10 @@ public class CustomerController {
                 )
                 .collect(Collectors.toList());
 
+
+        log.info("entityModels : {}", entityModels);
+        log.info("entityModels.size : {}", entityModels.size());
+
         return ResponseEntity.ok().body(
                                 CollectionModel.of(entityModels
                                     , linkTo(methodOn(CustomerController.class).searchCustomers(null)).withSelfRel()

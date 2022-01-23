@@ -1,6 +1,5 @@
 package com.sycoldstorage.wms.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,7 +18,7 @@ public class CustomerDto {
     private String faxNumber;
     private String useYn;
 
-    @QueryProjection //순수한 모델이 아니라고 판단될 수도 있어서 선택의 문제가 있을 수 있다.
+//    @QueryProjection //순수한 모델이 아니라고 판단될 수도 있어서 선택의 문제가 있을 수 있다.
     public CustomerDto(Long id, String name, String businessNumber, String representativeName, String businessConditions, String typeOfBusiness, String address, String phoneNumber, String faxNumber, String useYn) {
         this.id = id;
         this.name = name;

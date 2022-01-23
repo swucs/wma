@@ -1,10 +1,11 @@
 package com.sycoldstorage.wms.repository.impl;
 
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sycoldstorage.wms.dto.CustomerDto;
-import com.sycoldstorage.wms.dto.QCustomerDto;
 import com.sycoldstorage.wms.dto.SearchCustomerCondition;
 import com.sycoldstorage.wms.repository.CustomerRepositoryCustom;
 import org.springframework.util.StringUtils;
@@ -26,8 +27,8 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     public List<CustomerDto> searchCustomers(SearchCustomerCondition condition) {
 
         return queryFactory
-                .select(new QCustomerDto(
-                        customer.id
+                .select(Projections.constructor(CustomerDto.class
+                        , customer.id
                         , customer.name
                         , customer.businessNumber
                         , customer.representativeName
@@ -36,7 +37,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
                         , customer.address
                         , customer.phoneNumber
                         , customer.faxNumber
-                        , customer.use
+                        , new CaseBuilder().when(customer.use.eq(true)).then("Y").otherwise("N")
                 ))
                 .from(customer)
                 .where(
