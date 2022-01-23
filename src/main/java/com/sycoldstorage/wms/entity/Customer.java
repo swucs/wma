@@ -1,18 +1,18 @@
 package com.sycoldstorage.wms.entity;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import com.sycoldstorage.wms.dto.CustomerDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * 거래처 Entity
@@ -82,7 +82,7 @@ public class Customer {
         this.address = customerDto.getAddress();
         this.phoneNumber = customerDto.getPhoneNumber();
         this.faxNumber = customerDto.getFaxNumber();
-        this.use = customerDto.isUse();
+        this.use = "Y".equals(customerDto.getUseYn()) ? true : false;
     }
 
     /**
@@ -100,7 +100,7 @@ public class Customer {
                 .address(this.address)
                 .phoneNumber(this.phoneNumber)
                 .faxNumber(this.faxNumber)
-                .use(this.use)
+                .useYn(this.use ? "Y" : "N")
                 .build();
     }
 

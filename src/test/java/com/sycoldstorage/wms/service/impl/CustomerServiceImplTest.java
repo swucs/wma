@@ -48,11 +48,11 @@ class CustomerServiceImplTest {
         condition.setUseYn("Y");
 
         List<CustomerDto> customerDtos = Arrays.asList(
-                CustomerDto.builder().id(1l).name("거래처1").address("주소1").businessConditions("업종1").faxNumber("팩스1").use(true).build()
-                , CustomerDto.builder().id(2l).name("거래처2").address("주소2").businessConditions("업종2").faxNumber("팩스2").use(true).build()
-                , CustomerDto.builder().id(3l).name("거래처3").address("주소3").businessConditions("업종3").faxNumber("팩스3").use(true).build()
-                , CustomerDto.builder().id(4l).name("거래처4").address("주소4").businessConditions("업종4").faxNumber("팩스4").use(true).build()
-                , CustomerDto.builder().id(5l).name("거래처5").address("주소5").businessConditions("업종5").faxNumber("팩스5").use(true).build()
+                CustomerDto.builder().id(1l).name("거래처1").address("주소1").businessConditions("업종1").faxNumber("팩스1").useYn("Y").build()
+                , CustomerDto.builder().id(2l).name("거래처2").address("주소2").businessConditions("업종2").faxNumber("팩스2").useYn("Y").build()
+                , CustomerDto.builder().id(3l).name("거래처3").address("주소3").businessConditions("업종3").faxNumber("팩스3").useYn("Y").build()
+                , CustomerDto.builder().id(4l).name("거래처4").address("주소4").businessConditions("업종4").faxNumber("팩스4").useYn("Y").build()
+                , CustomerDto.builder().id(5l).name("거래처5").address("주소5").businessConditions("업종5").faxNumber("팩스5").useYn("Y").build()
         );
         when(customerRepository.searchCustomers(condition)).thenReturn(customerDtos);
 
@@ -94,7 +94,7 @@ class CustomerServiceImplTest {
         assertThat(created.getAddress()).isEqualTo(dto.getAddress());
         assertThat(created.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
         assertThat(created.getFaxNumber()).isEqualTo(dto.getFaxNumber());
-        assertThat(created.isUse()).isEqualTo(dto.isUse());
+        assertThat(created.isUse()).isEqualTo("Y".equals(dto.getUseYn()));
 
         log.info("created : {}", created);
 

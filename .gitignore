@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+spy.log
+wms.mv.db

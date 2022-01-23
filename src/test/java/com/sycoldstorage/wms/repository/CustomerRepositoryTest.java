@@ -87,7 +87,7 @@ class CustomerRepositoryTest {
                 .address("경기도 포천시 소흘읍 392-25 수정")
                 .phoneNumber("031-541-9999")
                 .faxNumber("031-531-9999")
-                .use(true)
+                .useYn("Y")
                 .build();
 
         byId.get().changeCustomer(dto);

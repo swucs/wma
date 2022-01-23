@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CustomerDto {
+
     private Long id;
     private String name;
     private String businessNumber;
@@ -16,10 +17,10 @@ public class CustomerDto {
     private String address;
     private String phoneNumber;
     private String faxNumber;
-    private boolean use;
+    private String useYn;
 
     @QueryProjection //순수한 모델이 아니라고 판단될 수도 있어서 선택의 문제가 있을 수 있다.
-    public CustomerDto(Long id, String name, String businessNumber, String representativeName, String businessConditions, String typeOfBusiness, String address, String phoneNumber, String faxNumber, boolean use) {
+    public CustomerDto(Long id, String name, String businessNumber, String representativeName, String businessConditions, String typeOfBusiness, String address, String phoneNumber, String faxNumber, String useYn) {
         this.id = id;
         this.name = name;
         this.businessNumber = businessNumber;
@@ -29,6 +30,6 @@ public class CustomerDto {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.faxNumber = faxNumber;
-        this.use = use;
+        this.useYn = useYn;
     }
 }
