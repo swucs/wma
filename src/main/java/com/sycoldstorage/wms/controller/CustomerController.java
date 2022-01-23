@@ -77,10 +77,6 @@ public class CustomerController {
     public ResponseEntity createCustomer(@RequestBody @Validated CustomerDto request,
                                          Errors errors) {
 
-//        if (errors.hasErrors()) {
-//            System.out.println("errors.getAllErrors() = " + errors.getAllErrors());
-//            return badRequest(errors);
-//        }
         customerCreateValidator.valid(request, errors);
         if (errors.hasErrors()) {
             return badRequest(errors);
@@ -112,6 +108,10 @@ public class CustomerController {
                                          @RequestBody @Validated CustomerDto request,
                                          Errors errors) {
 
+        customerCreateValidator.valid(request, errors);
+        if (errors.hasErrors()) {
+            return badRequest(errors);
+        }
 
         Customer updatedCustomer = null;
         try {
@@ -121,7 +121,7 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
 
-        EntityModel<Customer> entityModel = EntityModel.of(updatedCustomer)
+        EntityModel<CustomerDto> entityModel = EntityModel.of(updatedCustomer.toCustomerDto())
                 .add(linkTo(methodOn(CustomerController.class).updateCustomer(id, null, null)).withSelfRel())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-customer-update").withRel("profile"));
