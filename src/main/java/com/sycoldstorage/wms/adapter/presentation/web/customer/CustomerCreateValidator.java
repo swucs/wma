@@ -84,11 +84,13 @@ public class CustomerCreateValidator {
 
         //Fax번호
         String faxNumber = customerDto.getFaxNumber();
-        if (StringUtils.length(faxNumber) > 13) {
-            errors.rejectValue("faxNumber", "overSize", "FAX번호를 13자 이하로 입력하세요.");
-        }
-        if (!Pattern.matches("^(\\d{2,3})+[-]+(\\d{3,4})+[-]+(\\d{4})", faxNumber)) {
-            errors.rejectValue("faxNumber", "pattern", "FAX번호 형식이 맞지 않습니다. [000-000-0000]");
+        if (StringUtils.isNotEmpty(faxNumber)) {
+            if (StringUtils.length(faxNumber) > 13) {
+                errors.rejectValue("faxNumber", "overSize", "FAX번호를 13자 이하로 입력하세요.");
+            }
+            if (!Pattern.matches("^(\\d{2,3})+[-]+(\\d{3,4})+[-]+(\\d{4})", faxNumber)) {
+                errors.rejectValue("faxNumber", "pattern", "FAX번호 형식이 맞지 않습니다. [000-000-0000]");
+            }
         }
 
 
