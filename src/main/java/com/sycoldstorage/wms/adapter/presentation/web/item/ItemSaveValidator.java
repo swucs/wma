@@ -26,8 +26,15 @@ public class ItemSaveValidator {
         if (StringUtils.isEmpty(unitName)) {
             errors.rejectValue("unitName", "notEmpty", "단위명을 입력하세요.");
         } else {
-            if (name.length() > 100) {
+            if (unitName.length() > 100) {
                 errors.rejectValue("unitName", "overSize", "단위명을 100자 이하로 입력하세요.");
+            }
+        }
+
+        String remarks = itemDto.getRemarks();
+        if (StringUtils.isNotEmpty(remarks)) {
+            if (remarks.length() > 200) {
+                errors.rejectValue("remarks", "overSize", "비고를 200자 이하로 입력하세요.");
             }
         }
     }

@@ -84,7 +84,7 @@ class CustomerServiceImplTest {
 
         when(customerRepository.save(any(Customer.class))).then(AdditionalAnswers.returnsFirstArg());
 
-        CustomerDto created = customerService.create(dto);
+        CustomerDto created = customerService.createCustomer(dto);
 
         assertThat(created.getName()).isEqualTo(dto.getName());
         assertThat(created.getBusinessNumber()).isEqualTo(dto.getBusinessNumber());
@@ -124,7 +124,7 @@ class CustomerServiceImplTest {
         when(customerRepository.findById(any(Long.class))).thenReturn(Optional.of(new Customer(customerDto)));
 
 
-        CustomerDto updated = customerService.update(customerDto);
+        CustomerDto updated = customerService.updateCustomer(customerDto);
         assertThat(updated.getName()).isEqualTo(customerDto.getName());
         assertThat(updated.getBusinessNumber()).isEqualTo(customerDto.getBusinessNumber());
         assertThat(updated.getRepresentativeName()).isEqualTo(customerDto.getRepresentativeName());
@@ -158,16 +158,16 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findById(any(Long.class))).thenReturn(Optional.of(new Customer(customerDto)));
 
-        CustomerDto deleted = customerService.delete(id);
+        customerService.deleteCustomer(id);
 
-        assertThat(deleted.getName()).isEqualTo(customerDto.getName());
-        assertThat(deleted.getBusinessNumber()).isEqualTo(customerDto.getBusinessNumber());
-        assertThat(deleted.getRepresentativeName()).isEqualTo(customerDto.getRepresentativeName());
-        assertThat(deleted.getBusinessConditions()).isEqualTo(customerDto.getBusinessConditions());
-        assertThat(deleted.getTypeOfBusiness()).isEqualTo(customerDto.getTypeOfBusiness());
-        assertThat(deleted.getAddress()).isEqualTo(customerDto.getAddress());
-        assertThat(deleted.getPhoneNumber()).isEqualTo(customerDto.getPhoneNumber());
-        assertThat(deleted.getFaxNumber()).isEqualTo(customerDto.getFaxNumber());
-        assertThat(deleted.getUseYn()).isEqualTo(customerDto.getUseYn());
+//        assertThat(deleted.getName()).isEqualTo(customerDto.getName());
+//        assertThat(deleted.getBusinessNumber()).isEqualTo(customerDto.getBusinessNumber());
+//        assertThat(deleted.getRepresentativeName()).isEqualTo(customerDto.getRepresentativeName());
+//        assertThat(deleted.getBusinessConditions()).isEqualTo(customerDto.getBusinessConditions());
+//        assertThat(deleted.getTypeOfBusiness()).isEqualTo(customerDto.getTypeOfBusiness());
+//        assertThat(deleted.getAddress()).isEqualTo(customerDto.getAddress());
+//        assertThat(deleted.getPhoneNumber()).isEqualTo(customerDto.getPhoneNumber());
+//        assertThat(deleted.getFaxNumber()).isEqualTo(customerDto.getFaxNumber());
+//        assertThat(deleted.getUseYn()).isEqualTo(customerDto.getUseYn());
     }
 }

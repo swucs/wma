@@ -1,6 +1,7 @@
 package com.sycoldstorage.wms.adapter.presentation.web.customer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sycoldstorage.wms.TestUtil;
 import com.sycoldstorage.wms.annotation.EnableMockMvc;
 import com.sycoldstorage.wms.domain.customer.CustomerRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableMockMvc  //응답내용 Encoding을 위한
 @ActiveProfiles("dev") //application.properties 파일을 공용으로 사용하고 application-test.properties에서 Override한다.
 @AutoConfigureRestDocs
-@Transactional()
+@Transactional
 class CustomerControllerTest {
 
     @Autowired
@@ -52,7 +53,8 @@ class CustomerControllerTest {
 
         final String prefix = "_embedded.customerDtoList[].";
 
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/customers")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/customers")
+                                .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
                                 .param("name", "")
                                 .param("id", "")
                                 .param("useYn", "Y")
@@ -126,7 +128,8 @@ class CustomerControllerTest {
                 .build();
 
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/customer")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/customer")
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)
@@ -206,7 +209,8 @@ class CustomerControllerTest {
                 .build();
 
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/customer")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/customer")
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)
@@ -234,7 +238,8 @@ class CustomerControllerTest {
         customerDto.setName("원래 이름");
 
 
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/customer/{id}", customerDto.getId())
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/customer/{id}", customerDto.getId())
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)

@@ -36,7 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Transactional
     @Override
-    public CustomerDto create(CustomerDto customerDto) {
+    public CustomerDto createCustomer(CustomerDto customerDto) {
 
         Customer newCustomer = new Customer(customerDto);
         return customerRepository.save(newCustomer).toCustomerDto();
@@ -50,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Transactional
     @Override
-    public CustomerDto update(CustomerDto customerDto) throws NoSuchDataException {
+    public CustomerDto updateCustomer(CustomerDto customerDto) throws NoSuchDataException {
 
         Long id = customerDto.getId();
 
@@ -71,12 +71,11 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * 거래처정보 삭제 (플래그 처리)
      * @param id
-     * @return
      * @throws Exception
      */
     @Transactional
     @Override
-    public CustomerDto delete(Long id) throws NoSuchDataException {
+    public void deleteCustomer(Long id) throws NoSuchDataException {
 
         Optional<Customer> customerOptional = customerRepository.findById(id);
 
@@ -84,7 +83,6 @@ public class CustomerServiceImpl implements CustomerService {
             //request값을 customer로 매핑
             Customer customer = customerOptional.get();
             customer.remove();
-            return customer.toCustomerDto();
 
         } else {
             throw new NoSuchDataException();

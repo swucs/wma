@@ -29,7 +29,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                         , item.name
                         , item.unitWeight
                         , item.unitName
-                        , item.registerdDate
+                        , item.registeredDate
                         , item.remarks
                 ))
                 .from(item)

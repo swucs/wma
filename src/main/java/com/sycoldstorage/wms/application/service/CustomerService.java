@@ -11,11 +11,11 @@ public interface CustomerService {
     List<CustomerDto> searchCustomers(SearchCustomerCondition condition);
 
     @Transactional
-    CustomerDto create(CustomerDto customerDto);
+    CustomerDto createCustomer(CustomerDto customerDto);
 
     @Transactional
-    CustomerDto update(CustomerDto customerDto) throws NoSuchDataException;
+    CustomerDto updateCustomer(CustomerDto customerDto) throws NoSuchDataException;
 
     @Transactional
-    CustomerDto delete(Long id) throws NoSuchDataException;
+    void deleteCustomer(Long id) throws NoSuchDataException;
 }

@@ -40,7 +40,7 @@ class ItemRepositoryTest {
                     .unitWeight(15.0)
                     .unitName("상자")
                     .remarks("군납")
-                    .registerdDate(now)
+                    .registeredDate(now)
                     .build();
 
             itemRepository.save(item);

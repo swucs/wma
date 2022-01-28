@@ -80,7 +80,7 @@ public class CustomerController {
             return badRequest(errors);
         }
 
-        CustomerDto createdCustomerDto = customerService.create(request);
+        CustomerDto createdCustomerDto = customerService.createCustomer(request);
 
         EntityModel<CustomerDto> entityModel = EntityModel.of(createdCustomerDto)
                 .add(linkTo(methodOn(CustomerController.class).createCustomer(null, null)).withSelfRel())
@@ -113,7 +113,7 @@ public class CustomerController {
 
         CustomerDto updatedCustomerDto = null;
         try {
-            updatedCustomerDto = customerService.update(request);
+            updatedCustomerDto = customerService.updateCustomer(request);
         } catch (NoSuchDataException e) {
             //데이터가 없는 경우
             return ResponseEntity.notFound().build();
@@ -137,17 +137,14 @@ public class CustomerController {
     @DeleteMapping("/customer/{id}")
     public ResponseEntity deleteCustomer(@PathVariable long id) {
 
-
-        CustomerDto deletedCustomerDto = null;
         try {
-            deletedCustomerDto = customerService.delete(id);
+            customerService.deleteCustomer(id);
         } catch (NoSuchDataException e) {
             //데이터가 없는 경우
             return ResponseEntity.notFound().build();
         }
 
-        EntityModel<CustomerDto> entityModel = EntityModel.of(deletedCustomerDto)
-                .add(linkTo(methodOn(CustomerController.class).deleteCustomer(id)).withSelfRel())
+        EntityModel<CustomerDto> entityModel = EntityModel.of(CustomerDto.builder().id(id).build())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-customer-delete").withRel("profile"));
 

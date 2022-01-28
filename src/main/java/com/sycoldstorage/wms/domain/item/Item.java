@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_item")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -42,21 +42,21 @@ public class Item {
     private String unitName;
 
     @Column(nullable = false)
-    private LocalDateTime registerdDate;
+    private LocalDateTime registeredDate;
 
     private String remarks;
 
 
     public Item(ItemDto itemDto) {
         changeItem(itemDto);
-        this.registerdDate = LocalDateTime.now();
+        this.registeredDate = LocalDateTime.now();
     }
 
     public void changeItem(ItemDto itemDto) {
         this.name = itemDto.getName();
         this.unitWeight = itemDto.getUnitWeight();
         this.unitName = itemDto.getUnitName();
-        this.registerdDate = itemDto.getRegisterdDate();
+        this.registeredDate = itemDto.getRegisteredDate();
         this.remarks = itemDto.getRemarks();
     }
 
@@ -70,7 +70,7 @@ public class Item {
                 .name(this.name)
                 .unitWeight(this.unitWeight)
                 .unitName(this.unitName)
-                .registerdDate(this.registerdDate)
+                .registeredDate(this.registeredDate)
                 .remarks(this.remarks)
                 .build();
     }

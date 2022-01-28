@@ -13,7 +13,7 @@ public class ItemDto {
     private String name;
     private Double unitWeight;
     private String unitName;
-    private LocalDateTime registerdDate;
+    private LocalDateTime registeredDate;
     private String remarks;
 
     /**
@@ -22,15 +22,15 @@ public class ItemDto {
      * @param name
      * @param unitWeight
      * @param unitName
-     * @param registerdDate
+     * @param registeredDate
      * @param remarks
      */
-    public ItemDto(Long id, String name, double unitWeight, String unitName, LocalDateTime registerdDate, String remarks) {
+    public ItemDto(Long id, String name, double unitWeight, String unitName, LocalDateTime registeredDate, String remarks) {
         this.id = id;
         this.name = name;
         this.unitWeight = unitWeight;
         this.unitName = unitName;
-        this.registerdDate = registerdDate;
+        this.registeredDate = registeredDate;
         this.remarks = remarks;
     }
 }
