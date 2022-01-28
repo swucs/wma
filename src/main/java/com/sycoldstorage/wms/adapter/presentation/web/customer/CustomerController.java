@@ -1,7 +1,6 @@
 package com.sycoldstorage.wms.adapter.presentation.web.customer;
 
 
-import com.sycoldstorage.wms.domain.customer.Customer;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -32,11 +30,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final CustomerCreateValidator customerCreateValidator;
+    private final CustomerSaveValidator customerSaveValidator;
 
     /**
      * 거래처 목록
@@ -78,14 +75,14 @@ public class CustomerController {
     public ResponseEntity createCustomer(@RequestBody @Validated CustomerDto request,
                                          Errors errors) {
 
-        customerCreateValidator.valid(request, errors);
+        customerSaveValidator.valid(request, errors);
         if (errors.hasErrors()) {
             return badRequest(errors);
         }
 
-        Customer createdCustomer = customerService.create(request);
+        CustomerDto createdCustomerDto = customerService.create(request);
 
-        EntityModel<CustomerDto> entityModel = EntityModel.of(createdCustomer.toCustomerDto())
+        EntityModel<CustomerDto> entityModel = EntityModel.of(createdCustomerDto)
                 .add(linkTo(methodOn(CustomerController.class).createCustomer(null, null)).withSelfRel())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-customer-create").withRel("profile"));
@@ -109,20 +106,20 @@ public class CustomerController {
                                          @RequestBody @Validated CustomerDto request,
                                          Errors errors) {
 
-        customerCreateValidator.valid(request, errors);
+        customerSaveValidator.valid(request, errors);
         if (errors.hasErrors()) {
             return badRequest(errors);
         }
 
-        Customer updatedCustomer = null;
+        CustomerDto updatedCustomerDto = null;
         try {
-            updatedCustomer = customerService.update(request);
+            updatedCustomerDto = customerService.update(request);
         } catch (NoSuchDataException e) {
             //데이터가 없는 경우
             return ResponseEntity.notFound().build();
         }
 
-        EntityModel<CustomerDto> entityModel = EntityModel.of(updatedCustomer.toCustomerDto())
+        EntityModel<CustomerDto> entityModel = EntityModel.of(updatedCustomerDto)
                 .add(linkTo(methodOn(CustomerController.class).updateCustomer(id, null, null)).withSelfRel())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-customer-update").withRel("profile"));
@@ -141,15 +138,15 @@ public class CustomerController {
     public ResponseEntity deleteCustomer(@PathVariable long id) {
 
 
-        Customer deletedCustomer = null;
+        CustomerDto deletedCustomerDto = null;
         try {
-            deletedCustomer = customerService.delete(id);
+            deletedCustomerDto = customerService.delete(id);
         } catch (NoSuchDataException e) {
             //데이터가 없는 경우
             return ResponseEntity.notFound().build();
         }
 
-        EntityModel<Customer> entityModel = EntityModel.of(deletedCustomer)
+        EntityModel<CustomerDto> entityModel = EntityModel.of(deletedCustomerDto)
                 .add(linkTo(methodOn(CustomerController.class).deleteCustomer(id)).withSelfRel())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-customer-delete").withRel("profile"));

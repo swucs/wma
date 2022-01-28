@@ -1,6 +1,5 @@
 package com.sycoldstorage.wms.domain.customer.impl;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -8,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerDto;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.SearchCustomerCondition;
 import com.sycoldstorage.wms.domain.customer.CustomerRepositoryCustom;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -48,8 +47,8 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
                 .fetch();
     }
 
-    private Predicate equalUse(String useYn) {
-        if (StringUtils.hasText(useYn)) {
+    private BooleanExpression equalUse(String useYn) {
+        if (StringUtils.isNotEmpty(useYn)) {
             if ("Y".equals(useYn)) {
                 return customer.use.eq(true);
             }
@@ -61,12 +60,12 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
         return null;
     }
 
-    private Predicate equalId(Long id) {
+    private BooleanExpression equalId(Long id) {
         return id != null ? customer.id.eq(id) : null;
     }
 
     private BooleanExpression likeName(String name) {
-        return StringUtils.hasText(name) ? customer.name.like("%" + name + "%") : null;
+        return StringUtils.isNotEmpty(name) ? customer.name.like("%" + name + "%") : null;
     }
 
 

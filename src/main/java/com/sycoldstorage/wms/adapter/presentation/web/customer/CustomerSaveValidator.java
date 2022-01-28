@@ -10,9 +10,8 @@ import java.util.regex.Pattern;
  * 거래처 신규 생성 Validator
  */
 @Component
-public class CustomerCreateValidator {
+public class CustomerSaveValidator {
 
-//    private final static String ENCODING_UTF_8 = "UTF-8";
     public void valid(CustomerDto customerDto, Errors errors) {
 
         String name = customerDto.getName();

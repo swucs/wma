@@ -18,7 +18,19 @@ public class CustomerDto {
     private String faxNumber;
     private String useYn;
 
-//    @QueryProjection //순수한 모델이 아니라고 판단될 수도 있어서 선택의 문제가 있을 수 있다.
+    /**
+     * QueryDsl에서 사용됨
+     * @param id
+     * @param name
+     * @param businessNumber
+     * @param representativeName
+     * @param businessConditions
+     * @param typeOfBusiness
+     * @param address
+     * @param phoneNumber
+     * @param faxNumber
+     * @param useYn
+     */
     public CustomerDto(Long id, String name, String businessNumber, String representativeName, String businessConditions, String typeOfBusiness, String address, String phoneNumber, String faxNumber, String useYn) {
         this.id = id;
         this.name = name;

@@ -84,7 +84,7 @@ class CustomerServiceImplTest {
 
         when(customerRepository.save(any(Customer.class))).then(AdditionalAnswers.returnsFirstArg());
 
-        Customer created = customerService.create(dto);
+        CustomerDto created = customerService.create(dto);
 
         assertThat(created.getName()).isEqualTo(dto.getName());
         assertThat(created.getBusinessNumber()).isEqualTo(dto.getBusinessNumber());
@@ -94,7 +94,7 @@ class CustomerServiceImplTest {
         assertThat(created.getAddress()).isEqualTo(dto.getAddress());
         assertThat(created.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
         assertThat(created.getFaxNumber()).isEqualTo(dto.getFaxNumber());
-        assertThat(created.isUse()).isEqualTo("Y".equals(dto.getUseYn()));
+        assertThat(created.getUseYn()).isEqualTo("Y");
 
         log.info("created : {}", created);
 
@@ -106,7 +106,7 @@ class CustomerServiceImplTest {
 
         final long id = 1l;
 
-        Customer customer = Customer.builder()
+        CustomerDto customerDto = CustomerDto.builder()
                 .id(id)
                 .name("신규 거래처")
                 .businessNumber("1234567890")
@@ -116,24 +116,24 @@ class CustomerServiceImplTest {
                 .address("경기도 포천시 소흘읍 이동교리 392-25")
                 .phoneNumber("031-541-9960")
                 .faxNumber("031-531-7186")
-                .use(true)
+                .useYn("Y")
                 .build();
 
-        log.info("customer : {}", customer);
+        log.info("customerDto : {}", customerDto);
 
-        when(customerRepository.findById(any(Long.class))).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(any(Long.class))).thenReturn(Optional.of(new Customer(customerDto)));
 
 
-        Customer updated = customerService.update(customer.toCustomerDto());
-        assertThat(updated.getName()).isEqualTo(customer.getName());
-        assertThat(updated.getBusinessNumber()).isEqualTo(customer.getBusinessNumber());
-        assertThat(updated.getRepresentativeName()).isEqualTo(customer.getRepresentativeName());
-        assertThat(updated.getBusinessConditions()).isEqualTo(customer.getBusinessConditions());
-        assertThat(updated.getTypeOfBusiness()).isEqualTo(customer.getTypeOfBusiness());
-        assertThat(updated.getAddress()).isEqualTo(customer.getAddress());
-        assertThat(updated.getPhoneNumber()).isEqualTo(customer.getPhoneNumber());
-        assertThat(updated.getFaxNumber()).isEqualTo(customer.getFaxNumber());
-        assertThat(updated.isUse()).isEqualTo(customer.isUse());
+        CustomerDto updated = customerService.update(customerDto);
+        assertThat(updated.getName()).isEqualTo(customerDto.getName());
+        assertThat(updated.getBusinessNumber()).isEqualTo(customerDto.getBusinessNumber());
+        assertThat(updated.getRepresentativeName()).isEqualTo(customerDto.getRepresentativeName());
+        assertThat(updated.getBusinessConditions()).isEqualTo(customerDto.getBusinessConditions());
+        assertThat(updated.getTypeOfBusiness()).isEqualTo(customerDto.getTypeOfBusiness());
+        assertThat(updated.getAddress()).isEqualTo(customerDto.getAddress());
+        assertThat(updated.getPhoneNumber()).isEqualTo(customerDto.getPhoneNumber());
+        assertThat(updated.getFaxNumber()).isEqualTo(customerDto.getFaxNumber());
+        assertThat(updated.getUseYn()).isEqualTo(customerDto.getUseYn());
 
         log.info("updated : {}", updated);
     }
@@ -143,7 +143,7 @@ class CustomerServiceImplTest {
     void delete() {
         final long id = 3l;
 
-        Customer customer = Customer.builder()
+        CustomerDto customerDto = CustomerDto.builder()
                 .id(id)
                 .name("신규 거래처")
                 .businessNumber("1234567890")
@@ -153,23 +153,21 @@ class CustomerServiceImplTest {
                 .address("경기도 포천시 소흘읍 이동교리 392-25")
                 .phoneNumber("031-541-9960")
                 .faxNumber("031-531-7186")
-                .use(true)
+                .useYn("Y")
                 .build();
 
-        when(customerRepository.findById(any(Long.class))).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(any(Long.class))).thenReturn(Optional.of(new Customer(customerDto)));
 
-        Customer deleted = customerService.delete(id);
+        CustomerDto deleted = customerService.delete(id);
 
-        assertThat(deleted.getName()).isEqualTo(customer.getName());
-        assertThat(deleted.getBusinessNumber()).isEqualTo(customer.getBusinessNumber());
-        assertThat(deleted.getRepresentativeName()).isEqualTo(customer.getRepresentativeName());
-        assertThat(deleted.getBusinessConditions()).isEqualTo(customer.getBusinessConditions());
-        assertThat(deleted.getTypeOfBusiness()).isEqualTo(customer.getTypeOfBusiness());
-        assertThat(deleted.getAddress()).isEqualTo(customer.getAddress());
-        assertThat(deleted.getPhoneNumber()).isEqualTo(customer.getPhoneNumber());
-        assertThat(deleted.getFaxNumber()).isEqualTo(customer.getFaxNumber());
-        assertThat(deleted.isUse()).isEqualTo(customer.isUse());
-
-        assertThat(deleted.isDeleted()).isTrue();
+        assertThat(deleted.getName()).isEqualTo(customerDto.getName());
+        assertThat(deleted.getBusinessNumber()).isEqualTo(customerDto.getBusinessNumber());
+        assertThat(deleted.getRepresentativeName()).isEqualTo(customerDto.getRepresentativeName());
+        assertThat(deleted.getBusinessConditions()).isEqualTo(customerDto.getBusinessConditions());
+        assertThat(deleted.getTypeOfBusiness()).isEqualTo(customerDto.getTypeOfBusiness());
+        assertThat(deleted.getAddress()).isEqualTo(customerDto.getAddress());
+        assertThat(deleted.getPhoneNumber()).isEqualTo(customerDto.getPhoneNumber());
+        assertThat(deleted.getFaxNumber()).isEqualTo(customerDto.getFaxNumber());
+        assertThat(deleted.getUseYn()).isEqualTo(customerDto.getUseYn());
     }
 }

@@ -54,7 +54,7 @@ class CustomerRepositoryTest {
 
 
     @Test
-    @DisplayName("거래처 페이징 조회")
+    @DisplayName("거래처 조회")
     public void searchCustomer() {
 
         SearchCustomerCondition condition = new SearchCustomerCondition();
