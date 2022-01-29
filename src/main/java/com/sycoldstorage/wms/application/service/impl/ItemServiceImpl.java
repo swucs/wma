@@ -9,6 +9,7 @@ import com.sycoldstorage.wms.domain.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,12 +27,14 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.searchItems(condition);
     }
 
+    @Transactional
     @Override
     public ItemDto createItem(ItemDto itemDto) {
         Item item = new Item(itemDto);
         return itemRepository.save(item).toItemDto();
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(ItemDto itemDto) {
         Long id = itemDto.getId();

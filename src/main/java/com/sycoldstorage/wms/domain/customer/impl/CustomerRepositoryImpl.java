@@ -44,6 +44,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
                         , equalId(condition.getId())
                         , equalUse(condition.getUseYn())
                 )
+                .orderBy(customer.id.asc())
                 .fetch();
     }
 

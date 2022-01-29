@@ -1,5 +1,6 @@
 package com.sycoldstorage.wms.adapter.presentation.web.item;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ public class ItemDto {
     private String name;
     private Double unitWeight;
     private String unitName;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime registeredDate;
     private String remarks;
 

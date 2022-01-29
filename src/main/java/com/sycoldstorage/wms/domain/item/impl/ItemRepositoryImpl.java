@@ -36,6 +36,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(
                         likeName(condition.getName())
                 )
+                .orderBy(item.id.asc())
                 .fetch()
                 ;
     }
