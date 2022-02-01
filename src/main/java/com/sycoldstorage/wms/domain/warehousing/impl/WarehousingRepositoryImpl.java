@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
+import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingCustom;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingType;
@@ -40,7 +41,7 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
                         , warehousing.customer.name
                         , warehousing.name
                         , new CaseBuilder().when(warehousing.warehousingType.eq(WarehousingType.INCOMING)).then("입고").otherwise("출고")
-                        , warehousing.warehousingType
+                        , warehousing.warehousingType.stringValue().as("warehousingType")
                         , new CaseBuilder().when(warehousing.quickFrozen.eq(true)).then("Y").otherwise("N")
                 ))
                 .from(warehousing)
@@ -105,5 +106,36 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
      */
     private BooleanExpression equalWarehousingTypeText(WarehousingType warehousingType) {
         return warehousingType != null ? warehousing.warehousingType.eq(warehousingType) : null;
+    }
+
+
+    /**
+     * 해당 입출고ID의 입출고 내역 목록
+     * @param warehousingId
+     * @return
+     */
+    @Override
+    public List<WarehousingDetailDto> findWarehousingDetail(Long warehousingId) {
+
+        return queryFactory
+                .select(Projections.constructor(WarehousingDetailDto.class
+                        , warehousingDetail.id
+                        , warehousingDetail.item.id.as("item_id")
+                        , warehousingDetail.item.name.as("item_name")
+                        , warehousingDetail.item.unitWeight.as("item_unit_weight")
+                        , warehousingDetail.item.unitName.as("item_unit_name")
+                        , warehousingDetail.totalWeight.divide(warehousingDetail.item.unitWeight).as("count")
+                        , warehousingDetail.totalWeight.mod(warehousingDetail.item.unitWeight).as("remaining_weight")
+                        , warehousingDetail.totalWeight
+                        , warehousingDetail.remarks
+                        , new CaseBuilder().when(warehousingDetail.calculation.eq(true))
+                                .then("Y").otherwise("N").as("calculation_yn")
+                ))
+                .from(warehousingDetail)
+                .join(warehousingDetail.item, item)
+                .where(warehousingDetail.warehousing.id.eq(warehousingId))
+                .orderBy(warehousingDetail.id.asc())
+                .fetch();
+
     }
 }

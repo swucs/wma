@@ -17,16 +17,16 @@ public class SearchWarehousingCondition {
 
     private String customerName;
     private String itemName;
-    private String warehousingTypeText;
+    private String warehousingTypeValue;
 
     public WarehousingType getWarehousingType() {
 
-        if (this.warehousingTypeText == null) {
+        if (this.warehousingTypeValue == null) {
             return null;
         }
 
         try {
-            return WarehousingType.valueOf(this.warehousingTypeText);
+            return WarehousingType.valueOf(this.warehousingTypeValue);
         } catch (IllegalArgumentException e) {
             return null;
         }

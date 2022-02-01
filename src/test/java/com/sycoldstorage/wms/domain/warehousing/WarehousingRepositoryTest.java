@@ -1,6 +1,7 @@
 package com.sycoldstorage.wms.domain.warehousing;
 
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
+import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +27,8 @@ class WarehousingRepositoryTest {
     EntityManager em;
 
     @Test
-    @DisplayName("거래처 조회")
-    public void searchCustomer() {
+    @DisplayName("입출고 조회")
+    public void searchWarehousings() {
 
         SearchWarehousingCondition condition = new SearchWarehousingCondition();
         condition.setBaseDateFrom(LocalDate.of(2022, 1, 24));
@@ -41,6 +42,25 @@ class WarehousingRepositoryTest {
         for (WarehousingDto warehousingDto : result) {
             System.out.println("warehousingDto = " + warehousingDto);
         }
+    }
+
+    @Test
+    @DisplayName("입출고 내역 조회")
+    public void warehousingDetail() {
+
+        SearchWarehousingCondition condition = new SearchWarehousingCondition();
+        condition.setBaseDateFrom(LocalDate.of(2022, 1, 24));
+        condition.setBaseDateTo(LocalDate.of(2022, 1, 29));
+        condition.setCustomerName("맛죤식품");
+        condition.setItemName("돼지갈비양념");
+        List<WarehousingDto> warehousingDtos = warehousingRepository.searchWarehousings(condition);
+
+        List<WarehousingDetailDto> warehousingDetail = warehousingRepository.findWarehousingDetail(warehousingDtos.get(0).getId());
+
+        for (WarehousingDetailDto warehousingDetailDto : warehousingDetail) {
+            System.out.println("warehousingDetailDto = " + warehousingDetailDto);
+        }
+
     }
 
 }

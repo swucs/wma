@@ -45,7 +45,7 @@ public class WarehousingDetail {
     private double totalWeight;
 
     @Column(nullable = false)
-    private boolean calcultion;
+    private boolean calculation;
 
     private String remarks;
 

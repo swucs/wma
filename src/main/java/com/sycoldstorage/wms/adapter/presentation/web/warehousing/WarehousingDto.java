@@ -1,7 +1,6 @@
 package com.sycoldstorage.wms.adapter.presentation.web.warehousing;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sycoldstorage.wms.domain.warehousing.WarehousingType;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,21 +18,17 @@ public class WarehousingDto {
     private String customerName;
     private String name;
     private String warehousingTypeName;
-    private WarehousingType warehousingType;
+    private String warehousingTypeValue;
     private String quickFrozenYn;
 
-    public WarehousingDto(Long id, LocalDate baseDate, Long customerId, String customerName, String name, String warehousingTypeName, WarehousingType warehousingType, String quickFrozenYn) {
+    public WarehousingDto(Long id, LocalDate baseDate, Long customerId, String customerName, String name, String warehousingTypeName, String warehousingTypeValue, String quickFrozenYn) {
         this.id = id;
         this.baseDate = baseDate;
         this.customerId = customerId;
         this.customerName = customerName;
         this.name = name;
         this.warehousingTypeName = warehousingTypeName;
-        this.warehousingType = warehousingType;
+        this.warehousingTypeValue = warehousingTypeValue;
         this.quickFrozenYn = quickFrozenYn;
-    }
-
-    public String getWarehousingTypeText() {
-        return this.warehousingType.toString();
     }
 }
