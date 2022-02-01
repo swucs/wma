@@ -170,4 +170,16 @@ public class CustomerController {
     private Link getListLink() {
         return linkTo(methodOn(CustomerController.class).searchCustomers(null)).withRel("list");
     }
+
+
+    /**
+     * 유효한 거래처 목록(selectbox용)
+     * @param condition
+     * @return
+     */
+    @GetMapping("/customer/validCodes")
+    public ResponseEntity customerValidCodes(@ModelAttribute SearchCustomerCondition condition) {
+        List<CustomerSelectBoxDto> validCustomers = customerService.getValidCustomers();
+        return ResponseEntity.ok().body(validCustomers);
+    }
 }

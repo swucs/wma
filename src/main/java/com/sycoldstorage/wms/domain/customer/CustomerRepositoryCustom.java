@@ -1,6 +1,7 @@
 package com.sycoldstorage.wms.domain.customer;
 
 import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerDto;
+import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerSelectBoxDto;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.SearchCustomerCondition;
 
 import java.util.List;
@@ -11,4 +12,6 @@ import java.util.List;
  */
 public interface CustomerRepositoryCustom {
     List<CustomerDto> searchCustomers(SearchCustomerCondition condition);
+
+    List<CustomerSelectBoxDto> findValidCustomers();
 }

@@ -1,6 +1,7 @@
 package com.sycoldstorage.wms.application.service;
 
 import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerDto;
+import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerSelectBoxDto;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.SearchCustomerCondition;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 
@@ -18,4 +19,6 @@ public interface CustomerService {
 
     @Transactional
     void deleteCustomer(Long id) throws NoSuchDataException;
+
+    List<CustomerSelectBoxDto> getValidCustomers();
 }

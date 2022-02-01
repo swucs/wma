@@ -1,6 +1,7 @@
 package com.sycoldstorage.wms.application.service.impl;
 
 import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerDto;
+import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerSelectBoxDto;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.SearchCustomerCondition;
 import com.sycoldstorage.wms.domain.customer.Customer;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
@@ -87,6 +88,16 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             throw new NoSuchDataException();
         }
+    }
+
+    /**
+     * 거래처목록 검색
+     * @param : 검색조건을 담은 객체
+     * @return
+     */
+    @Override
+    public List<CustomerSelectBoxDto> getValidCustomers() {
+        return customerRepository.findValidCustomers();
     }
 
 }

@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerDto;
+import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerSelectBoxDto;
 import com.sycoldstorage.wms.adapter.presentation.web.customer.SearchCustomerCondition;
 import com.sycoldstorage.wms.domain.customer.CustomerRepositoryCustom;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,11 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    /**
+     * 거래처 목록
+     * @param condition
+     * @return
+     */
     @Override
     public List<CustomerDto> searchCustomers(SearchCustomerCondition condition) {
 
@@ -70,5 +76,24 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     }
 
 
-
+    /**
+     * 유효한 거래처 목록 (selectbox용)
+     * @return
+     */
+    @Override
+    public List<CustomerSelectBoxDto> findValidCustomers() {
+        return queryFactory
+                .select(Projections.constructor(CustomerSelectBoxDto.class
+                        , customer.id
+                        , customer.name
+                ))
+                .from(customer)
+                .where(
+                        customer.use.eq(true)
+                        , customer.deleted.eq(false)
+                )
+                .orderBy(customer.id.asc())
+                .fetch()
+                ;
+    }
 }

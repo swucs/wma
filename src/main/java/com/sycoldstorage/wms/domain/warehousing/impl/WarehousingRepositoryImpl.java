@@ -6,7 +6,7 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
-import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingListDto;
+import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingCustom;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingType;
 import org.apache.commons.lang3.StringUtils;
@@ -30,15 +30,17 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
     }
 
     @Override
-    public List<WarehousingListDto> searchWarehousings(SearchWarehousingCondition condition) {
+    public List<WarehousingDto> searchWarehousings(SearchWarehousingCondition condition) {
 
         return queryFactory
-                .select(Projections.constructor(WarehousingListDto.class
+                .select(Projections.constructor(WarehousingDto.class
                         , warehousing.id
                         , warehousing.baseDate
+                        , warehousing.customer.id
                         , warehousing.customer.name
                         , warehousing.name
-                        , new CaseBuilder().when(warehousing.warehousingType.eq(WarehousingType.IMCOMING)).then("입고").otherwise("출고")
+                        , new CaseBuilder().when(warehousing.warehousingType.eq(WarehousingType.INCOMING)).then("입고").otherwise("출고")
+                        , warehousing.warehousingType
                         , new CaseBuilder().when(warehousing.quickFrozen.eq(true)).then("Y").otherwise("N")
                 ))
                 .from(warehousing)

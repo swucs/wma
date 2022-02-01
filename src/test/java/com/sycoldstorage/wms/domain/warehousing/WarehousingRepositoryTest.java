@@ -1,7 +1,7 @@
 package com.sycoldstorage.wms.domain.warehousing;
 
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
-import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingListDto;
+import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,11 +34,11 @@ class WarehousingRepositoryTest {
         condition.setBaseDateTo(LocalDate.of(2022, 1, 29));
         condition.setCustomerName("맛죤식품");
         condition.setItemName("돼지갈비양념");
-        List<WarehousingListDto> result = warehousingRepository.searchWarehousings(condition);
+        List<WarehousingDto> result = warehousingRepository.searchWarehousings(condition);
 
 //        assertThat(result.size()).isEqualTo(22);
 
-        for (WarehousingListDto warehousingDto : result) {
+        for (WarehousingDto warehousingDto : result) {
             System.out.println("warehousingDto = " + warehousingDto);
         }
     }
