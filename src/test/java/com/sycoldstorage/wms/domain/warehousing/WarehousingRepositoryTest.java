@@ -55,7 +55,7 @@ class WarehousingRepositoryTest {
         condition.setItemName("돼지갈비양념");
         List<WarehousingDto> warehousingDtos = warehousingRepository.searchWarehousings(condition);
 
-        List<WarehousingDetailDto> warehousingDetail = warehousingRepository.findWarehousingDetail(warehousingDtos.get(0).getId());
+        List<WarehousingDetailDto> warehousingDetail = warehousingRepository.findWarehousingDetails(warehousingDtos.get(0).getId());
 
         for (WarehousingDetailDto warehousingDetailDto : warehousingDetail) {
             System.out.println("warehousingDetailDto = " + warehousingDetailDto);

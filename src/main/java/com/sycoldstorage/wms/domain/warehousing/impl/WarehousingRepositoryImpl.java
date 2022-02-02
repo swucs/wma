@@ -115,7 +115,7 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
      * @return
      */
     @Override
-    public List<WarehousingDetailDto> findWarehousingDetail(Long warehousingId) {
+    public List<WarehousingDetailDto> findWarehousingDetails(Long warehousingId) {
 
         return queryFactory
                 .select(Projections.constructor(WarehousingDetailDto.class

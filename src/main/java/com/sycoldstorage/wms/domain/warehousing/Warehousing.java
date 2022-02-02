@@ -1,5 +1,7 @@
 package com.sycoldstorage.wms.domain.warehousing;
 
+import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingSaveDetailRequest;
+import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingSaveRequest;
 import com.sycoldstorage.wms.domain.customer.Customer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,7 +23,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 입출고 Entity
@@ -53,7 +58,60 @@ public class Warehousing {
     @Column(nullable = false)
     private boolean quickFrozen;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "warehousing")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "warehousing", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<WarehousingDetail> warehousingDetails;
 
+    /**
+     * 입출고 정보 수정
+     * @param warehousingSaveRequest
+     */
+    public void changeWarehousing(WarehousingSaveRequest warehousingSaveRequest) {
+
+        this.name = warehousingSaveRequest.getName();
+        this.warehousingType = WarehousingType.valueOf(warehousingSaveRequest.getWarehousingTypeValue());
+        this.quickFrozen = "Y".equals(warehousingSaveRequest.getQuickFrozenYn());
+
+        //입출고 내역 수정 및 삭제
+        this.changeWarehousingDetails(warehousingSaveRequest);
+    }
+
+
+    /**
+     * 입출고 내역 수정 및 삭제
+     * @param warehousingSaveRequest
+     */
+    private void changeWarehousingDetails(WarehousingSaveRequest warehousingSaveRequest) {
+        //입출고 내역 수정
+        List<WarehousingSaveDetailRequest> requestDetails = warehousingSaveRequest.getWarehousingDetails();
+        List<WarehousingDetail> copiedWarehousingDetails = new ArrayList<>(this.warehousingDetails);    //ConcurrentModificationException를 피하기 위해 새로운 ArrayList
+        for (WarehousingDetail warehousingDetail : copiedWarehousingDetails) {
+
+            if (warehousingDetail.getId() == null) {
+                //신규인 경우 SKIP
+                continue;
+            }
+
+            //동일한 ID찾기
+            Optional<WarehousingSaveDetailRequest> requestDetailOptional = requestDetails.stream()
+                    .filter(e -> e.getId().equals(warehousingDetail.getId()))
+                    .findFirst();
+
+            if (requestDetailOptional.isPresent()) {
+                //수정
+                warehousingDetail.changeWarehousingDetail(requestDetailOptional.get());
+//                requestDetails.remove(requestDetailOptional.get()); //수정완료한 Request는 삭제
+            } else {
+                //삭제
+                this.warehousingDetails.remove(warehousingDetail);
+            }
+        }
+    }
+
+    /**
+     * 입출고 내역 신규생성
+     * @param warehousingDetail
+     */
+    public void addWarehousingDetails(WarehousingDetail warehousingDetail) {
+        this.warehousingDetails.add(warehousingDetail);
+    }
 }

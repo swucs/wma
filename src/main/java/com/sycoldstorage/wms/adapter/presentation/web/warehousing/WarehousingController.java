@@ -1,5 +1,7 @@
 package com.sycoldstorage.wms.adapter.presentation.web.warehousing;
 
+import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerController;
+import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.WarehousingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +67,7 @@ public class WarehousingController {
     @GetMapping("/warehousing/{id}/details")
     public ResponseEntity warehousingDetails(@PathVariable Long id) {
 
-        List<WarehousingDetailDto> warehousingDetails = warehousingService.getWarehousingDetail(id);
+        List<WarehousingDetailDto> warehousingDetails = warehousingService.getWarehousingDetails(id);
 
         return ResponseEntity.ok().body(
                 CollectionModel.of(warehousingDetails
@@ -76,13 +78,33 @@ public class WarehousingController {
     }
 
     @PutMapping("/warehousing/{id}")
-    public ResponseEntity updateWarehousing(@PathVariable Long id, @RequestBody WarehousingSaveRequest warehousing) {
+    public ResponseEntity updateWarehousing(@PathVariable Long id
+                                            , @RequestBody WarehousingSaveRequest request) {
 
         log.info("id : {}", id);
-        log.info("warehousing : {}", warehousing);
-        log.info("id : {}", id);
+        log.info("request : {}", request);
 
-        return ResponseEntity.ok().build();
+        try {
+            warehousingService.updateWarehousing(request);
+        } catch (NoSuchDataException e) {
+            //데이터가 없는 경우
+            return ResponseEntity.notFound().build();
+        }
+
+        EntityModel<WarehousingDto> entityModel = EntityModel.of(WarehousingDto.builder().build())
+                .add(linkTo(methodOn(CustomerController.class).updateCustomer(id, null, null)).withSelfRel())
+                .add(getListLink())
+                .add(Link.of("/docs/index.html#resources-customer-update").withRel("profile"));
+
+        return ResponseEntity.ok(entityModel);
+    }
+
+    /**
+     * list 링크
+     * @return
+     */
+    private Link getListLink() {
+        return linkTo(methodOn(CustomerController.class).searchCustomers(null)).withRel("list");
     }
 
 }
