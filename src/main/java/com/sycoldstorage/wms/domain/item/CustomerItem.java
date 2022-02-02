@@ -1,59 +1,46 @@
-package com.sycoldstorage.wms.domain.warehousing;
+package com.sycoldstorage.wms.domain.item;
 
 import com.sycoldstorage.wms.domain.customer.Customer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
- * 입출고 Entity
+ * 품목 Entity
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
 @ToString
+@EqualsAndHashCode(of="id")
 @Entity
-public class Warehousing {
+public class CustomerItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private LocalDate baseDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private WarehousingType warehousingType;
-
-    @Column(nullable = false)
-    private boolean quickFrozen;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "warehousing")
-    private List<WarehousingDetail> warehousingDetails;
-
+    private Long storageFeeId;
 }

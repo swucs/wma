@@ -2,6 +2,7 @@ package com.sycoldstorage.wms.adapter.presentation.web.warehousing;
 
 import com.sycoldstorage.wms.application.service.WarehousingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,6 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * 입출고 Controller
  */
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class WarehousingController {
@@ -70,4 +74,15 @@ public class WarehousingController {
                 .add(Link.of("/docs/index.html#resources-warehousing-detail-list").withRel("profile"))
         );
     }
+
+    @PutMapping("/warehousing/{id}")
+    public ResponseEntity updateWarehousing(@PathVariable Long id, @RequestBody WarehousingSaveRequest warehousing) {
+
+        log.info("id : {}", id);
+        log.info("warehousing : {}", warehousing);
+        log.info("id : {}", id);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.sycoldstorage.wms.application.service.impl;
 
 import com.sycoldstorage.wms.adapter.presentation.web.item.ItemDto;
+import com.sycoldstorage.wms.adapter.presentation.web.item.ItemSelectBoxDto;
 import com.sycoldstorage.wms.adapter.presentation.web.item.SearchItemCondition;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.ItemService;
@@ -48,5 +49,14 @@ public class ItemServiceImpl implements ItemService {
         } else {
             throw new NoSuchDataException();
         }
+    }
+
+    /**
+     * 해당 거래처의 품목목록
+     * @return
+     */
+    @Override
+    public List<ItemSelectBoxDto> getItemsByCustomerId(long customerId) {
+        return itemRepository.findItemsByCustomerId(customerId);
     }
 }

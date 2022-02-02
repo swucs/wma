@@ -143,4 +143,15 @@ public class ItemController {
     private Link getListLink() {
         return linkTo(methodOn(ItemController.class).searchItems(null)).withRel("list");
     }
+
+    /**
+     * 해당 거래처의 품목 목록(selectbox용)
+     * @param customerId
+     * @return
+     */
+    @GetMapping("/item/customer/{customerId}/codes")
+    public ResponseEntity itemCustomerCodes(@PathVariable long customerId) {
+        List<ItemSelectBoxDto> allItems = itemService.getItemsByCustomerId(customerId);
+        return ResponseEntity.ok().body(allItems);
+    }
 }
