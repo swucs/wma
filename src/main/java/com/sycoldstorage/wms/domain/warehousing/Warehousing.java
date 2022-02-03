@@ -59,8 +59,20 @@ public class Warehousing {
     private boolean quickFrozen;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "warehousing", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<WarehousingDetail> warehousingDetails;
+    private List<WarehousingDetail> warehousingDetails = new ArrayList<>();
 
+    /**
+     * 생성자
+     * @param warehousingSaveRequest
+     * @param customer
+     */
+    public Warehousing(WarehousingSaveRequest warehousingSaveRequest, Customer customer) {
+        this.baseDate = warehousingSaveRequest.getBaseDate();
+        this.customer = customer;
+        this.name = warehousingSaveRequest.getName();
+        this.warehousingType = WarehousingType.valueOf(warehousingSaveRequest.getWarehousingTypeValue());
+        this.quickFrozen = "Y".equals(warehousingSaveRequest.getQuickFrozenYn());
+    }
     /**
      * 입출고 정보 수정
      * @param warehousingSaveRequest

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,6 +79,32 @@ public class WarehousingController {
     }
 
     /**
+     * 입출고 생성
+     * @param request
+     * @return
+     */
+    @PostMapping("/warehousing")
+    public ResponseEntity createWarehousing(@RequestBody WarehousingSaveRequest request) {
+
+        log.info("request : {}", request);
+
+        WarehousingDto warehousingDto;
+        try {
+            warehousingDto = warehousingService.createWarehousing(request);
+        } catch (NoSuchDataException e) {
+            //데이터가 없는 경우
+            return ResponseEntity.notFound().build();
+        }
+
+        EntityModel<WarehousingDto> entityModel = EntityModel.of(warehousingDto)
+                .add(linkTo(methodOn(WarehousingController.class).createWarehousing(null)).withSelfRel())
+                .add(getListLink())
+                .add(Link.of("/docs/index.html#resources-warehousing-create").withRel("profile"));
+
+        return ResponseEntity.ok(entityModel);
+    }
+
+    /**
      * 입출고 수정
      * @param id
      * @param request
@@ -91,7 +118,6 @@ public class WarehousingController {
         log.info("request : {}", request);
 
         WarehousingDto warehousingDto;
-
         try {
             warehousingDto = warehousingService.updateWarehousing(request);
         } catch (NoSuchDataException e) {
@@ -100,9 +126,9 @@ public class WarehousingController {
         }
 
         EntityModel<WarehousingDto> entityModel = EntityModel.of(warehousingDto)
-                .add(linkTo(methodOn(CustomerController.class).updateCustomer(id, null, null)).withSelfRel())
+                .add(linkTo(methodOn(WarehousingController.class).updateWarehousing(id, null)).withSelfRel())
                 .add(getListLink())
-                .add(Link.of("/docs/index.html#resources-customer-update").withRel("profile"));
+                .add(Link.of("/docs/index.html#resources-warehousing-update").withRel("profile"));
 
         return ResponseEntity.ok(entityModel);
     }
