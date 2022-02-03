@@ -1,5 +1,6 @@
 package com.sycoldstorage.wms.domain.warehousing.impl;
 
+import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -30,20 +31,16 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    /**
+     * 입출고 목록
+     * @param condition
+     * @return
+     */
     @Override
     public List<WarehousingDto> searchWarehousings(SearchWarehousingCondition condition) {
 
         return queryFactory
-                .select(Projections.constructor(WarehousingDto.class
-                        , warehousing.id
-                        , warehousing.baseDate
-                        , warehousing.customer.id
-                        , warehousing.customer.name
-                        , warehousing.name
-                        , new CaseBuilder().when(warehousing.warehousingType.eq(WarehousingType.INCOMING)).then("입고").otherwise("출고")
-                        , warehousing.warehousingType.stringValue().as("warehousingType")
-                        , new CaseBuilder().when(warehousing.quickFrozen.eq(true)).then("Y").otherwise("N")
-                ))
+                .select(this.selectWarehousingDto())
                 .from(warehousing)
                 .join(warehousing.customer, customer)
                 .where(
@@ -54,6 +51,23 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
                 )
                 .orderBy(warehousing.baseDate.desc(), warehousing.id.asc())
                 .fetch();
+    }
+
+    /**
+     * WarehousingDto의 Select 절
+     * @return
+     */
+    private ConstructorExpression<WarehousingDto> selectWarehousingDto() {
+        return Projections.constructor(WarehousingDto.class
+                , warehousing.id
+                , warehousing.baseDate
+                , warehousing.customer.id
+                , warehousing.customer.name
+                , warehousing.name
+                , new CaseBuilder().when(warehousing.warehousingType.eq(WarehousingType.INCOMING)).then("입고").otherwise("출고")
+                , warehousing.warehousingType.stringValue().as("warehousingType")
+                , new CaseBuilder().when(warehousing.quickFrozen.eq(true)).then("Y").otherwise("N")
+        );
     }
 
 
@@ -110,6 +124,22 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
 
 
     /**
+     * 해당 입출고ID의 입출고정보
+     * @param id
+     * @return
+     */
+    @Override
+    public WarehousingDto findWarehousingById(long id) {
+        return queryFactory
+                .select(this.selectWarehousingDto())
+                .from(warehousing)
+                .join(warehousing.customer, customer)
+                .where(warehousing.id.eq(id))
+                .fetchOne();
+    }
+
+
+    /**
      * 해당 입출고ID의 입출고 내역 목록
      * @param warehousingId
      * @return
@@ -124,7 +154,7 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
                         , warehousingDetail.item.name.as("item_name")
                         , warehousingDetail.item.unitWeight.as("item_unit_weight")
                         , warehousingDetail.item.unitName.as("item_unit_name")
-                        , warehousingDetail.totalWeight.divide(warehousingDetail.item.unitWeight).as("count")
+                        , warehousingDetail.totalWeight.divide(warehousingDetail.item.unitWeight).floor().as("count")
                         , warehousingDetail.totalWeight.mod(warehousingDetail.item.unitWeight).as("remaining_weight")
                         , warehousingDetail.totalWeight
                         , warehousingDetail.remarks

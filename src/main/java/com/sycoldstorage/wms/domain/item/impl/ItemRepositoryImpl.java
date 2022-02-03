@@ -58,6 +58,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         return queryFactory
                 .select(Projections.constructor(ItemSelectBoxDto.class
                         , item.id
+                        , item.name
                         , new CaseBuilder().when(item.remarks.isNotEmpty())
                                 .then(item.name.concat("(").concat(item.remarks).concat(")"))
                                 .otherwise(item.name.concat("(").concat(item.unitWeight.stringValue()).concat(")"))

@@ -9,5 +9,7 @@ import java.util.List;
 public interface WarehousingCustom {
     List<WarehousingDto> searchWarehousings(SearchWarehousingCondition condition);
 
+    WarehousingDto findWarehousingById(long id);
+
     List<WarehousingDetailDto> findWarehousingDetails(Long warehousingId);
 }

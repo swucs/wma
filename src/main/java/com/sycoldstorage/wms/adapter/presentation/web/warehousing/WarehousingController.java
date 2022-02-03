@@ -77,6 +77,12 @@ public class WarehousingController {
         );
     }
 
+    /**
+     * 입출고 수정
+     * @param id
+     * @param request
+     * @return
+     */
     @PutMapping("/warehousing/{id}")
     public ResponseEntity updateWarehousing(@PathVariable Long id
                                             , @RequestBody WarehousingSaveRequest request) {
@@ -84,14 +90,16 @@ public class WarehousingController {
         log.info("id : {}", id);
         log.info("request : {}", request);
 
+        WarehousingDto warehousingDto;
+
         try {
-            warehousingService.updateWarehousing(request);
+            warehousingDto = warehousingService.updateWarehousing(request);
         } catch (NoSuchDataException e) {
             //데이터가 없는 경우
             return ResponseEntity.notFound().build();
         }
 
-        EntityModel<WarehousingDto> entityModel = EntityModel.of(WarehousingDto.builder().build())
+        EntityModel<WarehousingDto> entityModel = EntityModel.of(warehousingDto)
                 .add(linkTo(methodOn(CustomerController.class).updateCustomer(id, null, null)).withSelfRel())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-customer-update").withRel("profile"));

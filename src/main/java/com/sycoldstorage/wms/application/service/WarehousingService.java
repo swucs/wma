@@ -15,5 +15,5 @@ public interface WarehousingService {
     List<WarehousingDetailDto> getWarehousingDetails(long warehousingId);
 
     @Transactional
-    void updateWarehousing(WarehousingSaveRequest warehousingSaveRequest) throws NoSuchDataException;
+    WarehousingDto updateWarehousing(WarehousingSaveRequest warehousingSaveRequest) throws NoSuchDataException;
 }

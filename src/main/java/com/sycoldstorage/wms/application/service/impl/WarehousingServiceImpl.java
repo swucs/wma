@@ -56,7 +56,7 @@ public class WarehousingServiceImpl implements WarehousingService {
      */
     @Transactional
     @Override
-    public void updateWarehousing(WarehousingSaveRequest warehousingSaveRequest) throws NoSuchDataException {
+    public WarehousingDto updateWarehousing(WarehousingSaveRequest warehousingSaveRequest) throws NoSuchDataException {
 
         Long warehousingId = warehousingSaveRequest.getId();
         Optional<Warehousing> warehousingOptional = warehousingRepository.findById(warehousingId);
@@ -78,5 +78,7 @@ public class WarehousingServiceImpl implements WarehousingService {
         } else {
             throw new NoSuchDataException();
         }
+
+        return warehousingRepository.findWarehousingById(warehousingId);
     }
 }
