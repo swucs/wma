@@ -9,6 +9,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -129,6 +130,28 @@ public class WarehousingController {
                 .add(linkTo(methodOn(WarehousingController.class).updateWarehousing(id, null)).withSelfRel())
                 .add(getListLink())
                 .add(Link.of("/docs/index.html#resources-warehousing-update").withRel("profile"));
+
+        return ResponseEntity.ok(entityModel);
+    }
+
+    /**
+     * 입출고 삭제
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/warehousing/{id}")
+    public ResponseEntity deleteWarehousing(@PathVariable Long id) {
+
+        try {
+            warehousingService.deleteWarehousing(id);
+        } catch (NoSuchDataException e) {
+            //데이터가 없는 경우
+            return ResponseEntity.notFound().build();
+        }
+
+        EntityModel<WarehousingDto> entityModel = EntityModel.of(WarehousingDto.builder().id(id).build())
+                .add(getListLink())
+                .add(Link.of("/docs/index.html#resources-warehousing-delete").withRel("profile"));
 
         return ResponseEntity.ok(entityModel);
     }

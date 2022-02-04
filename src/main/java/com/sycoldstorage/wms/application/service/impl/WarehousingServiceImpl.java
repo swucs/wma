@@ -114,4 +114,22 @@ public class WarehousingServiceImpl implements WarehousingService {
 
         return warehousingRepository.findWarehousingById(warehousingId);
     }
+
+    /**
+     * 입출고 삭제 : warehousing삭제시 연관객체인 warehousingDetail도 삭제됨
+     * @param warehousingId
+     * @throws NoSuchDataException
+     */
+    @Transactional
+    @Override
+    public void deleteWarehousing(long warehousingId) throws NoSuchDataException {
+        Optional<Warehousing> warehousingOptional = warehousingRepository.findById(warehousingId);
+
+        if (warehousingOptional.isEmpty()) {
+            throw new NoSuchDataException();
+        }
+
+        Warehousing warehousing = warehousingOptional.get();
+        warehousingRepository.delete(warehousing);
+    }
 }

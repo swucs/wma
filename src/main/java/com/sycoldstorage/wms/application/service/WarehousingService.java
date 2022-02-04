@@ -19,4 +19,7 @@ public interface WarehousingService {
 
     @Transactional
     WarehousingDto updateWarehousing(WarehousingSaveRequest warehousingSaveRequest) throws NoSuchDataException;
+
+    @Transactional
+    void deleteWarehousing(long warehousingId) throws NoSuchDataException;
 }
