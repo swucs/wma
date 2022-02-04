@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>wms</name>
     <description>wms</description>
+    <packaging>jar</packaging>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -102,6 +103,8 @@
     </dependencies>
 
     <build>
+        <!-- Jar파일명 -->
+        <finalName>shinyoung-wms-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.asciidoctor</groupId>

@@ -1,0 +1,48 @@
+stages:
+  - build
+  - dockerize
+  - deploy
+
+
+#build
+build-wms-api:
+  stage: build
+  script:
+#    - cd customer-service
+    - mvn clean compile package -DskipTests=true
+  artifacts:
+    paths:
+      - target/shinyoung-wms-api.jar
+    expire_in: 1 week
+  only:
+    - main
+  tags:
+    - build
+
+#docker build
+dockerize-wms-api:
+  stage: dockerize
+  script:
+    - docker build -f Dockerfile --tag registry.sungbae.net/shinyoung/wms/shinyoung-wms-api:$CI_PIPELINE_IID .
+    - docker push registry.sungbae.net/shinyoung/wms/shinyoung-wms-api:$CI_PIPELINE_IID
+    - docker rmi registry.sungbae.net/shinyoung/wms/shinyoung-wms-api:$CI_PIPELINE_IID
+  only:
+    - main
+  tags:
+    - dockerize
+  needs: [ build-wms-api ]
+
+#deploy
+deploy-wms-api:
+  stage: deploy
+  script:
+    - ssh angryant@172.30.1.32 "docker pull registry.sungbae.net/shinyoung/wms/shinyoung-wms-api:$CI_PIPELINE_IID"
+    - ssh angryant@172.30.1.32 "docker ps -q --filter name="shinyoung-wms-api" | xargs -r docker stop"
+    - ssh angryant@172.30.1.32 "docker image prune -a -f"
+    - ssh angryant@172.30.1.32 "docker run -d -p 9090:8080 --name shinyoung-wms-api --rm registry.sungbae.net/shinyoung/wms/shinyoung-wms-api:$CI_PIPELINE_IID "
+  only:
+    - main
+  tags:
+    - deploy
+  needs: [ dockerize-wms-api ]
+  when: manual
