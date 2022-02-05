@@ -1,12 +1,14 @@
 package com.sycoldstorage.wms.adapter.presentation.web.item;
 
+import com.sycoldstorage.wms.adapter.presentation.web.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class ItemSaveValidator {
+public class ItemSaveValidator implements Validator<ItemDto> {
 
+    @Override
     public void valid(ItemDto itemDto, Errors errors) {
         String name = itemDto.getName();
         if (StringUtils.isEmpty(name)) {

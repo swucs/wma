@@ -5,7 +5,7 @@ import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerSelectBox
 import com.sycoldstorage.wms.adapter.presentation.web.customer.SearchCustomerCondition;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface CustomerService {

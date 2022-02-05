@@ -1,5 +1,6 @@
 package com.sycoldstorage.wms.adapter.presentation.web.customer;
 
+import com.sycoldstorage.wms.adapter.presentation.web.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
  * 거래처 신규 생성 Validator
  */
 @Component
-public class CustomerSaveValidator {
+public class CustomerSaveValidator implements Validator<CustomerDto> {
 
     public void valid(CustomerDto customerDto, Errors errors) {
 

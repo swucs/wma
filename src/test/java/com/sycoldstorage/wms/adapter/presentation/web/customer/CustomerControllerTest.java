@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -47,6 +48,9 @@ class CustomerControllerTest {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Autowired
+    Environment env;
+
     @Test
     @DisplayName("거래처목록")
     void getCustomers() throws Exception {
@@ -54,7 +58,7 @@ class CustomerControllerTest {
         final String prefix = "_embedded.customerDtoList[].";
 
         this.mockMvc.perform(MockMvcRequestBuilders.get("/customers")
-                                .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
+                                .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                                 .param("name", "")
                                 .param("id", "")
                                 .param("useYn", "Y")
@@ -68,7 +72,7 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("_links.self.href").exists())
                 .andExpect(jsonPath("_links.profile.href").exists())
                 //rest docs
-                .andDo(document("customers-list"
+                .andDo(document("customer-list"
                                 , links(
                                         linkWithRel("self").description("link to self")
                                         , linkWithRel("profile").description("프로필로 이동하는 링크")
@@ -129,7 +133,7 @@ class CustomerControllerTest {
 
 
         this.mockMvc.perform(MockMvcRequestBuilders.post("/customer")
-                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)
@@ -210,7 +214,7 @@ class CustomerControllerTest {
 
 
         this.mockMvc.perform(MockMvcRequestBuilders.post("/customer")
-                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)
@@ -239,7 +243,7 @@ class CustomerControllerTest {
 
 
         this.mockMvc.perform(MockMvcRequestBuilders.put("/customer/{id}", customerDto.getId())
-                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)

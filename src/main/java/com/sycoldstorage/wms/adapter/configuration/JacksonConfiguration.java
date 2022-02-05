@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 
 @Configuration
-public class JacksonConfig {
+public class JacksonConfiguration {
     @Bean
     public Module jsonMapperJava8DateTimeModule() {
         SimpleModule module = new SimpleModule();

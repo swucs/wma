@@ -6,7 +6,7 @@ import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingSaveRequest;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface WarehousingService {

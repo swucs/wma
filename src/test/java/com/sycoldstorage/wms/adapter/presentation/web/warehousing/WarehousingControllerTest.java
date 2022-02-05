@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,6 +51,9 @@ class WarehousingControllerTest {
     @Autowired
     WarehousingRepository warehousingRepository;
 
+    @Autowired
+    Environment env;
+
     @Test
     @DisplayName("입출고목록")
     void searchWarehousings() throws Exception {
@@ -57,7 +61,7 @@ class WarehousingControllerTest {
         final String prefix = "_embedded.warehousingDtoList[].";
 
         this.mockMvc.perform(MockMvcRequestBuilders.get("/warehousings")
-                                .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
+                                .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                                 .param("baseDateFrom", "2022-01-25")
                                 .param("baseDateTo", "2022-02-01")
                                 .param("warehousingTypeValue", "INCOMING")
@@ -73,7 +77,7 @@ class WarehousingControllerTest {
                 .andExpect(jsonPath("_links.self.href").exists())
                 .andExpect(jsonPath("_links.profile.href").exists())
                 //rest docs
-                .andDo(document("warehousings-list"
+                .andDo(document("warehousing-list"
                                 , links(
                                         linkWithRel("self").description("link to self")
                                         , linkWithRel("profile").description("프로필로 이동하는 링크")
@@ -130,7 +134,7 @@ class WarehousingControllerTest {
 
         //PathVariable을 위한 pathParameters를 사용하기 위해서는 RestDocumentationRequestBuilders를 사용해야 함.
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("/warehousing/{id}/details", id)
-                        .header(HttpHeaders.AUTHORIZATION, TestUtil.BEARER_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)

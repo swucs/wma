@@ -1,9 +1,9 @@
-package com.sycoldstorage.wms.adapter.presentation.web.item;
+package com.sycoldstorage.wms.adapter.presentation.web.storageFee;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sycoldstorage.wms.TestUtil;
 import com.sycoldstorage.wms.annotation.EnableMockMvc;
-import com.sycoldstorage.wms.domain.item.ItemRepository;
+import com.sycoldstorage.wms.domain.storageFee.StorageFeeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -37,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("dev") //application.properties 파일을 공용으로 사용하고 application-test.properties에서 Override한다.
 @AutoConfigureRestDocs
 @Transactional
-class ItemControllerTest {
+class StorageFeeControllerTest {
+
     @Autowired
     MockMvc mockMvc;
 
@@ -45,31 +48,31 @@ class ItemControllerTest {
     ObjectMapper objectMapper;
 
     @Autowired
-    ItemRepository itemRepository;
+    StorageFeeRepository storageFeeRepository;
 
     @Autowired
     Environment env;
 
     @Test
-    @DisplayName("품목목록")
-    void getItems() throws Exception {
+    @DisplayName("보관료목록")
+    void search() throws Exception {
 
-        final String prefix = "_embedded.itemDtoList[].";
+        final String prefix = "_embedded.storageFeeDtoList[].";
 
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/items")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/storageFees")
                         .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
-                        .param("name", "")
+                        .param("name", "군납")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("_embedded.itemDtoList[0]._links.self.href").exists())
+                .andExpect(jsonPath("_embedded.storageFeeDtoList[0]._links.self.href").exists())
                 .andExpect(jsonPath("_links.self.href").exists())
                 .andExpect(jsonPath("_links.profile.href").exists())
                 //rest docs
-                .andDo(document("item-list"
+                .andDo(document("storageFee-list"
                                 , links(
                                         linkWithRel("self").description("link to self")
                                         , linkWithRel("profile").description("프로필로 이동하는 링크")
@@ -79,21 +82,17 @@ class ItemControllerTest {
                                         , headerWithName(HttpHeaders.CONTENT_TYPE).description("content type 명시")
                                 )
                                 , requestParameters(
-                                        parameterWithName("name").description("검색하려는 품목명(like 검색)")
+                                        parameterWithName("name").description("검색하려는 보관료명")
                                 )
-
                                 , responseHeaders(
-//                                headerWithName(HttpHeaders.LOCATION).description("location header")
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("content type : Hal Json Type")
                                 )
-
                                 , responseFields(
-                                        fieldWithPath(prefix + "id").type(JsonFieldType.NUMBER).description("품목ID")
-                                        , fieldWithPath(prefix + "name").type(JsonFieldType.STRING).description("품목명")
-                                        , fieldWithPath(prefix + "unitName").type(JsonFieldType.STRING).description("단위명")
-                                        , fieldWithPath(prefix + "unitWeight").type(JsonFieldType.NUMBER).description("단위무게")
-                                        , fieldWithPath(prefix + "remarks").type(JsonFieldType.STRING).description("비고").optional()
-                                        , fieldWithPath(prefix + "registeredDate").type(JsonFieldType.STRING).description("최초등록일자")
+                                        fieldWithPath(prefix + "id").type(JsonFieldType.NUMBER).description("보관료ID")
+                                        , fieldWithPath(prefix + "baseDate").type(JsonFieldType.STRING).description("기준일자")
+                                        , fieldWithPath(prefix + "name").type(JsonFieldType.STRING).description("보관료명")
+                                        , fieldWithPath(prefix + "storage").type(JsonFieldType.NUMBER).description("보관료")
+                                        , fieldWithPath(prefix + "loading").type(JsonFieldType.NUMBER).description("상하차비")
                                         , fieldWithPath(prefix + "_links.self.href").description("해당 데이터의 상세정보 링크")
                                         , fieldWithPath("_links.self.href").description("현재 화면 링크정보")
                                         , fieldWithPath("_links.profile.href").description("현재 화면 링크정보")
@@ -103,22 +102,21 @@ class ItemControllerTest {
         ;
     }
 
-
     @Test
-    @DisplayName("품목정보 생성")
+    @DisplayName("보관료 생성")
     @Transactional
     @Rollback
-    void createItem() throws Exception {
+    void create() throws Exception {
 
-        ItemDto createRequest = ItemDto.builder()
-                .name("신규 품목")
-                .unitName("상자")
-                .unitWeight(15.0)
-                .remarks("비고")
+        StorageFeeDto createRequest = StorageFeeDto.builder()
+                .name("군납기본3")
+                .baseDate(LocalDate.now())
+                .storage(1.8)
+                .loading(50d)
                 .build();
 
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/item")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/storageFee")
                         .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
@@ -128,11 +126,11 @@ class ItemControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(createRequest.getName()))
-                .andExpect(jsonPath("unitName").value(createRequest.getUnitName()))
-                .andExpect(jsonPath("unitWeight").value(createRequest.getUnitWeight()))
-                .andExpect(jsonPath("remarks").value(createRequest.getRemarks()))
+                .andExpect(jsonPath("baseDate").value(createRequest.getBaseDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+                .andExpect(jsonPath("storage").value(createRequest.getStorage()))
+                .andExpect(jsonPath("loading").value(createRequest.getLoading()))
                 //rest docs
-                .andDo(document("item-create"
+                .andDo(document("storageFee-create"
                                 , links(
                                         linkWithRel("self").description("link to self")
                                         , linkWithRel("list").description("리스트 조회 링크")
@@ -143,28 +141,25 @@ class ItemControllerTest {
                                         , headerWithName(HttpHeaders.CONTENT_TYPE).description("content type 명시")
                                 )
                                 , requestFields(
-                                        fieldWithPath("id").description("품목ID")
-                                        , fieldWithPath("name").description("품목명")
-                                        , fieldWithPath("unitName").description("단위명")
-                                        , fieldWithPath("unitWeight").description("단위무게")
-                                        , fieldWithPath("remarks").description("비고").optional()
-                                        , fieldWithPath("registeredDate").description("최초등록일자")
+                                        fieldWithPath("id").description("보관료ID")
+                                        , fieldWithPath("name").description("보관료명")
+                                        , fieldWithPath("baseDate").description("기준일자")
+                                        , fieldWithPath("storage").description("보관료")
+                                        , fieldWithPath("loading").description("상하차비")
                                 )
                                 , responseHeaders(
-//                                headerWithName(HttpHeaders.LOCATION).description("location header")
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("content type : Hal Json Type")
                                 )
 
                                 , responseFields(
-                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("품목ID")
-                                        , fieldWithPath("name").type(JsonFieldType.STRING).description("품목명")
-                                        , fieldWithPath("unitName").type(JsonFieldType.STRING).description("단위명")
-                                        , fieldWithPath("unitWeight").type(JsonFieldType.NUMBER).description("단위무게")
-                                        , fieldWithPath("remarks").type(JsonFieldType.STRING).description("비고").optional()
-                                        , fieldWithPath("registeredDate").type(JsonFieldType.STRING).description("최초등록일자")
+                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("보관료ID")
+                                        , fieldWithPath("name").type(JsonFieldType.STRING).description("보관료명")
+                                        , fieldWithPath("baseDate").type(JsonFieldType.STRING).description("기준일자")
+                                        , fieldWithPath("storage").type(JsonFieldType.NUMBER).description("부관료")
+                                        , fieldWithPath("loading").type(JsonFieldType.NUMBER).description("상하차비")
                                         , fieldWithPath("_links.self.href").description("생성된 데이터의 상세정보 조회 링크")
                                         , fieldWithPath("_links.list.href").description("리스트 조회 링크정보")
-                                        , fieldWithPath("_links.profile.href").description("품목 등록 profile 링크정보")
+                                        , fieldWithPath("_links.profile.href").description("보관료 등록 profile 링크정보")
                                 )
                         )
                 )
@@ -174,18 +169,18 @@ class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("품목정보생성_입력값에러")
-    void createEventBadRequestWrongInput() throws Exception {
+    @DisplayName("보관료생성_입력값에러")
+    void createBadRequestWrongInput() throws Exception {
 
-        ItemDto createRequest = ItemDto.builder()
-                .name("신규 품목")
-                .unitWeight(255.9)
-                .unitName("asdfjkalsdfjl;asdjfl;askjdflaksjdflkajsdkfluqerwiouqwopruqioewruoiwejfaklsfhajkdgvczvnzxmcvnzxmhjkadfhjdaklhfkasljdhflaskdjfhaslkdjfhaskldjrhioeuryqoiwuerhaskjfhas;ldkfjals;dkfjl;asdruqoieruioqwperujaklsdjfals;dkjfla;sdkjfl;asdkjfl;askdjfl;askdjfl;asd")
-                .remarks("123123123123123123761823sahfaksjdfhlkasjdfh lasjfsalfhksajdhfklasdhfklashjfdklsajhfksajhfkashdfjkashdfkasjhdfkljsahdflkjahslkwqeruiyworeiuyqweriadsjkfahsklfam,vnzx.,cvnzxm,cvhjkalsdhfkjlasyhiouqyreiouhfjklahsfkjhasdjkflhaskdlfhjasdlfkjashdfluyqrwiouyqweroiuyqweiruyqewi")
+        StorageFeeDto createRequest = StorageFeeDto.builder()
+                .name("asdfjkalsdfjl;asdjfl;askjdflaksjdflkajsdkfluqerwiouqwopruqioewruoiwejfaklsfhajkdgvczvnzxmcvnzxmhjkadfhjdaklhfkasljdhflaskdjfhaslkdjfhaskldjrhioeuryqoiwuerhaskjfhas;ldkfjals;dkfjl;asdruqoieruioqwperujaklsdjfals;dkjfla;sdkjfl;asdkjfl;askdjfl;askdjfl;asd")
+                .baseDate(null)
+                .storage(0d)
+                .loading(null)
                 .build();
 
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/item")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/storageFee")
                         .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
@@ -198,38 +193,38 @@ class ItemControllerTest {
                 .andExpect(jsonPath("errors[0].field").exists())
                 .andExpect(jsonPath("errors[0].defaultMessage").exists())
                 .andExpect(jsonPath("errors[0].code").exists())
-                .andExpect(jsonPath("errors[0].rejectedValue").exists())
+//                .andExpect(jsonPath("errors[0].rejectedValue").exists())
                 .andExpect(jsonPath("_links.list").exists())   //에러인 경우에 index에 대한 link를 기대한다.
         ;
 
     }
 
     @Test
-    @DisplayName("품목정보 수정")
-    void updateItem() throws Exception {
+    @DisplayName("보관료 수정")
+    void update() throws Exception {
 
-        ItemDto itemDto = itemRepository.findById(1l).get().toItemDto();
-        itemDto.setName("원래 이름");
-        itemDto.setUnitName("수정단위명");
-        itemDto.setUnitWeight(100.0);
-        itemDto.setRemarks("수정된 비고");
+        StorageFeeDto storageFeeDto = storageFeeRepository.findById(1l).get().toStorageFeeDto();
+        storageFeeDto.setName("보관료명 수정");
+        storageFeeDto.setBaseDate(LocalDate.now());
+        storageFeeDto.setStorage(30.5);
+        storageFeeDto.setLoading(100d);
 
 
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/item/{id}", itemDto.getId())
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/storageFee/{id}", storageFeeDto.getId())
                         .header(HttpHeaders.AUTHORIZATION, TestUtil.createBearerToken(env))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .accept(MediaTypes.HAL_JSON)
-                        .content(this.objectMapper.writeValueAsString(itemDto))
+                        .content(this.objectMapper.writeValueAsString(storageFeeDto))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value(itemDto.getName()))
-                .andExpect(jsonPath("unitName").value(itemDto.getUnitName()))
-                .andExpect(jsonPath("unitWeight").value(itemDto.getUnitWeight()))
-                .andExpect(jsonPath("remarks").value(itemDto.getRemarks()))
+                .andExpect(jsonPath("name").value(storageFeeDto.getName()))
+                .andExpect(jsonPath("baseDate").value(storageFeeDto.getBaseDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+                .andExpect(jsonPath("storage").value(storageFeeDto.getStorage()))
+                .andExpect(jsonPath("loading").value(storageFeeDto.getLoading()))
                 //rest docs
-                .andDo(document("item-update"
+                .andDo(document("storageFee-update"
                                 , links(
                                         linkWithRel("self").description("link to self")
                                         , linkWithRel("list").description("리스트 조회 링크")
@@ -240,32 +235,30 @@ class ItemControllerTest {
                                         , headerWithName(HttpHeaders.CONTENT_TYPE).description("content type 명시")
                                 )
                                 , requestFields(
-                                        fieldWithPath("id").description("품목ID")
-                                        , fieldWithPath("name").description("품목명")
-                                        , fieldWithPath("unitName").description("단위명")
-                                        , fieldWithPath("unitWeight").description("단위무게")
-                                        , fieldWithPath("remarks").description("비고").optional()
-                                        , fieldWithPath("registeredDate").description("최초등록일자")
+                                        fieldWithPath("id").description("보관료ID")
+                                        , fieldWithPath("name").description("보관료명")
+                                        , fieldWithPath("baseDate").description("기준일자")
+                                        , fieldWithPath("storage").description("보관료")
+                                        , fieldWithPath("loading").description("상하차비")
                                 )
                                 , responseHeaders(
-//                                headerWithName(HttpHeaders.LOCATION).description("location header")
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("content type : Hal Json Type")
                                 )
 
                                 , responseFields(
-                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("품목ID")
-                                        , fieldWithPath("name").type(JsonFieldType.STRING).description("품목명")
-                                        , fieldWithPath("unitName").type(JsonFieldType.STRING).description("단위명")
-                                        , fieldWithPath("unitWeight").type(JsonFieldType.NUMBER).description("단위무게")
-                                        , fieldWithPath("remarks").type(JsonFieldType.STRING).description("비고").optional()
-                                        , fieldWithPath("registeredDate").type(JsonFieldType.STRING).description("최초등록일자")
+                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("보관료ID")
+                                        , fieldWithPath("name").type(JsonFieldType.STRING).description("보관료명")
+                                        , fieldWithPath("baseDate").type(JsonFieldType.STRING).description("기준일자")
+                                        , fieldWithPath("storage").type(JsonFieldType.NUMBER).description("부관료")
+                                        , fieldWithPath("loading").type(JsonFieldType.NUMBER).description("상하차비")
                                         , fieldWithPath("_links.self.href").description("생성된 데이터의 상세정보 조회 링크")
                                         , fieldWithPath("_links.list.href").description("리스트 조회 링크정보")
-                                        , fieldWithPath("_links.profile.href").description("품목 등록 profile 링크정보")
+                                        , fieldWithPath("_links.profile.href").description("보관료 등록 profile 링크정보")
                                 )
                         )
                 )
         ;
 
     }
+
 }

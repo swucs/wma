@@ -3,6 +3,7 @@ package com.sycoldstorage.wms.domain.warehousing;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingSaveDetailRequest;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingSaveRequest;
 import com.sycoldstorage.wms.domain.customer.Customer;
+import com.sycoldstorage.wms.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -121,9 +122,11 @@ public class Warehousing {
 
     /**
      * 입출고 내역 신규생성
-     * @param warehousingDetail
+     * @param item
+     * @param warehousingSaveDetailRequest
      */
-    public void addWarehousingDetails(WarehousingDetail warehousingDetail) {
+    public void createWarehousingDetails(Item item, WarehousingSaveDetailRequest warehousingSaveDetailRequest) {
+        WarehousingDetail warehousingDetail = new WarehousingDetail(this, item, warehousingSaveDetailRequest);
         this.warehousingDetails.add(warehousingDetail);
     }
 }

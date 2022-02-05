@@ -12,13 +12,12 @@ import com.sycoldstorage.wms.domain.customer.CustomerRepository;
 import com.sycoldstorage.wms.domain.item.Item;
 import com.sycoldstorage.wms.domain.item.ItemRepository;
 import com.sycoldstorage.wms.domain.warehousing.Warehousing;
-import com.sycoldstorage.wms.domain.warehousing.WarehousingDetail;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +75,7 @@ public class WarehousingServiceImpl implements WarehousingService {
         for (WarehousingSaveDetailRequest requestDetail : requestDetails) {
             //신규
             Item item = itemRepository.findById(requestDetail.getItemId()).orElseThrow(() -> new NoSuchDataException());
-            savedWarehousing.addWarehousingDetails(new WarehousingDetail(savedWarehousing, item, requestDetail));
+            savedWarehousing.createWarehousingDetails(item, requestDetail);
         }
 
         return warehousingRepository.findWarehousingById(savedWarehousing.getId());
@@ -108,7 +107,7 @@ public class WarehousingServiceImpl implements WarehousingService {
             //신규
             if (requestDetail.getId() == null) {
                 Item item = itemRepository.findById(requestDetail.getItemId()).orElseThrow(() -> new NoSuchDataException());
-                warehousing.addWarehousingDetails(new WarehousingDetail(warehousing, item, requestDetail));
+                warehousing.createWarehousingDetails(item, requestDetail);
             }
         }
 
