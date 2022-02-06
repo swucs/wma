@@ -1,5 +1,7 @@
 package com.sycoldstorage.wms.domain.warehousing;
 
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.CustomerItemTermDto;
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.SearchCustomerItemTermCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
@@ -59,6 +61,28 @@ class WarehousingRepositoryTest {
 
         for (WarehousingDetailDto warehousingDetailDto : warehousingDetail) {
             System.out.println("warehousingDetailDto = " + warehousingDetailDto);
+        }
+
+    }
+
+    @Test
+    @DisplayName("고객 품목별 기간별 통")
+    public void findCustomerItemTermStatisticsList() {
+
+        SearchCustomerItemTermCondition condition = new SearchCustomerItemTermCondition();
+        condition.setCustomerId(3l);
+        condition.setBaseDateFrom(LocalDate.of(2022, 1, 1));
+        condition.setBaseDateTo(LocalDate.of(2022, 1, 31));
+
+        List<CustomerItemTermDto> customerItemTermStatisticsList = warehousingRepository.findCustomerItemTermStatisticsList(condition);
+
+        for (CustomerItemTermDto customerItemTermDto : customerItemTermStatisticsList) {
+            System.out.println("customerItemTermDto = " + customerItemTermDto.getItemName()
+                    + ",  " + customerItemTermDto.getIncomingQtyText()
+                    + ",  " + customerItemTermDto.getOutgoingQtyText()
+                    + ",  " + customerItemTermDto.getStockQtyText()
+                    + ",  " + customerItemTermDto.getRecentBaseDate()
+            );
         }
 
     }

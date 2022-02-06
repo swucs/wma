@@ -6,6 +6,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.CustomerItemTermDto;
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.SearchCustomerItemTermCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
@@ -168,4 +170,90 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
                 .fetch();
 
     }
+
+
+    @Override
+    public List<CustomerItemTermDto> findCustomerItemTermStatisticsList(SearchCustomerItemTermCondition condition) {
+        return queryFactory
+                .select(Projections.constructor(CustomerItemTermDto.class
+                        , new CaseBuilder().when(item.remarks.isNotEmpty())
+                                .then(item.name.concat("(").concat(item.remarks).concat(")"))
+                                .otherwise(item.name.concat("(").concat(item.unitWeight.stringValue()).concat(")"))
+                                .as("itemName")
+
+                        , new CaseBuilder()
+                                .when(
+                                        warehousing.warehousingType.eq(WarehousingType.INCOMING)
+                                        .and(warehousing.baseDate.between(condition.getBaseDateFrom(), condition.getBaseDateTo()))
+                                )
+                                .then(warehousingDetail.totalWeight)
+                                .otherwise(0d)
+                                .sum()
+                                .as("incomingUnitQty")
+
+                        , new CaseBuilder()
+                                .when(
+                                        warehousing.warehousingType.eq(WarehousingType.INCOMING)
+                                        .and(warehousing.baseDate.between(condition.getBaseDateFrom(), condition.getBaseDateTo()))
+                                )
+                                .then(warehousingDetail.totalWeight)
+                                .otherwise(0d)
+                                .sum()
+                                .as("incomingWeightQty")
+
+                        , new CaseBuilder()
+                                .when(
+                                        warehousing.warehousingType.eq(WarehousingType.OUTGOING)
+                                        .and(warehousing.baseDate.between(condition.getBaseDateFrom(), condition.getBaseDateTo()))
+                                )
+                                .then(warehousingDetail.totalWeight)
+                                .otherwise(0d)
+                                .sum()
+                                .as("outgoingUnitQty")
+
+                        , new CaseBuilder()
+                                .when(
+                                        warehousing.warehousingType.eq(WarehousingType.OUTGOING)
+                                        .and(warehousing.baseDate.between(condition.getBaseDateFrom(), condition.getBaseDateTo()))
+                                )
+                                .then(warehousingDetail.totalWeight)
+                                .otherwise(0d)
+                                .sum()
+                                .as("outgoingWeightQty")
+
+
+                        , new CaseBuilder()
+                                .when(warehousing.warehousingType.eq(WarehousingType.INCOMING))
+                                .then(warehousingDetail.totalWeight)
+                                .otherwise(0d)
+                                .sum()
+                                .as("incomingStockWeightQty")
+
+                        , new CaseBuilder()
+                                .when(warehousing.warehousingType.eq(WarehousingType.OUTGOING))
+                                .then(warehousingDetail.totalWeight)
+                                .otherwise(0d)
+                                .sum()
+                                .as("outgoingStockWeightQty")
+
+                        , item.unitName
+                        , item.unitWeight
+                        , warehousing.baseDate.max().as("recentBaseDate")
+                ))
+                .from(warehousingDetail)
+                .join(warehousingDetail.item, item)
+                .join(warehousingDetail.warehousing, warehousing)
+                .join(warehousing.customer, customer)
+                .on(
+                        customer.id.eq(condition.getCustomerId())
+                        .and(warehousing.baseDate.loe(condition.getBaseDateTo()))
+                )
+                .groupBy(item.id, item.name, item.remarks, item.unitWeight, item.unitName)
+                .orderBy(item.id.asc())
+                .fetch()
+                ;
+
+    }
+
+
 }
