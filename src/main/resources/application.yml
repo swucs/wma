@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://xxx.xxx.xxx.xxx:5432/sycoldstorage
+    driver-class-name: org.postgresql.Driver
+    username: xxxx
+    password: xxxx
+
+  #JPA 설정
+  jpa:
+    properties:
+      hibernate:
+        #Dialect 설정
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        #하이버네이트가 실행하는 모든 SQL문을 콘솔로 출력해 준다
+        show_sql: false
+        #콘솔에 출력되는 JPA 실행 쿼리를 가독성있게 표현한다.
+        format_sql: true
+        #디버깅이 용이하도록 SQL문 이외에 추가적인 정보를 출력해 준다.
+        use_sql_comments: false
+        #엔티티와 테이블이 정상 매핑되어 있는지만 검증합니다.
+        ddl-auto: validate    #validate : 추후 변경할것
+        generate-ddl: false  #false : 추후 변경할것
+
+#p6spy 로깅
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      multiline: true
+
+token:
+  secret: shinyoung_admin_token
+  access_token:
+    expiration: 86400000
+
+
+cors:
+  allowedOrigins: "http://localhost:3000,https://dev.sycoldstorage.com/"
+  allowedMethods: "*"
+  exposedHeader: "Authorization,adminId"

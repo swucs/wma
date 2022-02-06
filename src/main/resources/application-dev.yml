@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://xxx.xxx.xxx.xxx:5432/sycoldstorage
+    driver-class-name: org.postgresql.Driver
+    username: xxxx
+    password: xxxx
+
+cors:
+  allowedOrigins: "http://localhost:3000,https://dev.sycoldstorage.com/"
