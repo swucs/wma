@@ -172,8 +172,13 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
     }
 
 
+    /**
+     * 고객 품목별 기간별 통계
+     * @param condition
+     * @return
+     */
     @Override
-    public List<CustomerItemTermDto> findCustomerItemTermStatisticsList(SearchCustomerItemTermCondition condition) {
+    public List<CustomerItemTermDto> searchCustomerItemTermStatistics(SearchCustomerItemTermCondition condition) {
         return queryFactory
                 .select(Projections.constructor(CustomerItemTermDto.class
                         , new CaseBuilder().when(item.remarks.isNotEmpty())

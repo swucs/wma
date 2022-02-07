@@ -15,5 +15,5 @@ public interface WarehousingCustom {
 
     List<WarehousingDetailDto> findWarehousingDetails(Long warehousingId);
 
-    List<CustomerItemTermDto> findCustomerItemTermStatisticsList(SearchCustomerItemTermCondition condition);
+    List<CustomerItemTermDto> searchCustomerItemTermStatistics(SearchCustomerItemTermCondition condition);
 }

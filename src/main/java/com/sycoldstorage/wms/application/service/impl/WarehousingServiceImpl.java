@@ -1,5 +1,7 @@
 package com.sycoldstorage.wms.application.service.impl;
 
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.CustomerItemTermDto;
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.SearchCustomerItemTermCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
@@ -130,5 +132,16 @@ public class WarehousingServiceImpl implements WarehousingService {
 
         Warehousing warehousing = warehousingOptional.get();
         warehousingRepository.delete(warehousing);
+    }
+
+
+    /**
+     * 고객 품목별 기간별 통계
+     * @param condition
+     * @return
+     */
+    @Override
+    public List<CustomerItemTermDto> searchCustomerItemTermStatistics(SearchCustomerItemTermCondition condition) {
+        return warehousingRepository.searchCustomerItemTermStatistics(condition);
     }
 }

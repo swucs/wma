@@ -2,6 +2,7 @@ package com.sycoldstorage.wms.adapter.presentation.web.statistics;
 
 import lombok.Data;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 
 /**
@@ -19,6 +20,8 @@ public class CustomerItemTermDto {
     private String unitName;
     private Double unitWeight;
     private LocalDate recentBaseDate;
+
+    private static DecimalFormat df = new DecimalFormat("#");
 
     public CustomerItemTermDto(String itemName, Double incomingUnitQty, Double incomingWeightQty, Double outgoingUnitQty
             , Double outgoingWeightQty, Double incomingStockWeightQty, Double outgoingStockWeightQty, String unitName
@@ -40,8 +43,9 @@ public class CustomerItemTermDto {
      * @return
      */
     public String getIncomingQtyText() {
+
         return new StringBuffer()
-                .append(Math.floor(incomingUnitQty / unitWeight))
+                .append(df.format(Math.floor(incomingUnitQty / unitWeight)))
                 .append(unitName)
                 .append(" ")
                 .append(incomingUnitQty % unitWeight)
@@ -55,7 +59,7 @@ public class CustomerItemTermDto {
      */
     public String getOutgoingQtyText() {
         return new StringBuffer()
-                .append(Math.floor(outgoingUnitQty / unitWeight))
+                .append(df.format(Math.floor(outgoingUnitQty / unitWeight)))
                 .append(unitName)
                 .append(" ")
                 .append(outgoingUnitQty % unitWeight)
@@ -72,7 +76,7 @@ public class CustomerItemTermDto {
         double totalStock = incomingStockWeightQty - outgoingStockWeightQty;
 
         return new StringBuffer()
-                .append(Math.floor(totalStock / unitWeight))
+                .append(df.format(Math.floor(totalStock / unitWeight)))
                 .append(unitName)
                 .append(" ")
                 .append(totalStock % unitWeight)

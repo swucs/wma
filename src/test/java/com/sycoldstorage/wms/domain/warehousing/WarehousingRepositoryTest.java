@@ -66,7 +66,7 @@ class WarehousingRepositoryTest {
     }
 
     @Test
-    @DisplayName("고객 품목별 기간별 통")
+    @DisplayName("고객 품목별 기간별 통계")
     public void findCustomerItemTermStatisticsList() {
 
         SearchCustomerItemTermCondition condition = new SearchCustomerItemTermCondition();
@@ -74,7 +74,7 @@ class WarehousingRepositoryTest {
         condition.setBaseDateFrom(LocalDate.of(2022, 1, 1));
         condition.setBaseDateTo(LocalDate.of(2022, 1, 31));
 
-        List<CustomerItemTermDto> customerItemTermStatisticsList = warehousingRepository.findCustomerItemTermStatisticsList(condition);
+        List<CustomerItemTermDto> customerItemTermStatisticsList = warehousingRepository.searchCustomerItemTermStatistics(condition);
 
         for (CustomerItemTermDto customerItemTermDto : customerItemTermStatisticsList) {
             System.out.println("customerItemTermDto = " + customerItemTermDto.getItemName()

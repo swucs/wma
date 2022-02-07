@@ -1,5 +1,7 @@
 package com.sycoldstorage.wms.application.service;
 
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.CustomerItemTermDto;
+import com.sycoldstorage.wms.adapter.presentation.web.statistics.SearchCustomerItemTermCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
@@ -22,4 +24,6 @@ public interface WarehousingService {
 
     @Transactional
     void deleteWarehousing(long warehousingId) throws NoSuchDataException;
+
+    List<CustomerItemTermDto> searchCustomerItemTermStatistics(SearchCustomerItemTermCondition condition);
 }
