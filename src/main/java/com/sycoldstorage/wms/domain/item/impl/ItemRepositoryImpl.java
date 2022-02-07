@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.sycoldstorage.wms.domain.item.QCustomerItem.customerItem;
+import static com.sycoldstorage.wms.domain.customerItem.QCustomerItem.customerItem;
 import static com.sycoldstorage.wms.domain.item.QItem.item;
 
 public class ItemRepositoryImpl implements ItemRepositoryCustom {

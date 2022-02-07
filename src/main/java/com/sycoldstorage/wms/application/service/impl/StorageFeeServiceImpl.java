@@ -2,6 +2,7 @@ package com.sycoldstorage.wms.application.service.impl;
 
 import com.sycoldstorage.wms.adapter.presentation.web.storageFee.SearchStorageFeeCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.storageFee.StorageFeeDto;
+import com.sycoldstorage.wms.adapter.presentation.web.storageFee.StorageFeeSelectBoxDto;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.StorageFeeService;
 import com.sycoldstorage.wms.domain.storageFee.StorageFee;
@@ -60,5 +61,14 @@ public class StorageFeeServiceImpl implements StorageFeeService {
         StorageFee storageFee = storageFeeOptional.get();
         storageFee.changeStorageFee(storageFeeDto);
         return storageFee.toStorageFeeDto();
+    }
+
+    /**
+     * 해당 거래처의 품목목록
+     * @return
+     */
+    @Override
+    public List<StorageFeeSelectBoxDto> getAllStorageFees() {
+        return storageFeeRepository.findAllStorageFees();
     }
 }

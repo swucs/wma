@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sycoldstorage.wms.adapter.presentation.web.storageFee.SearchStorageFeeCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.storageFee.StorageFeeDto;
+import com.sycoldstorage.wms.adapter.presentation.web.storageFee.StorageFeeSelectBoxDto;
 import com.sycoldstorage.wms.domain.storageFee.StorageFeeRepositoryCustom;
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,5 +51,23 @@ public class StorageFeeRepositoryImpl implements StorageFeeRepositoryCustom {
      */
     private BooleanExpression likeName(String name) {
         return StringUtils.isNotEmpty(name) ? storageFee.name.like("%" + name + "%") : null;
+    }
+
+
+    /**
+     * 보관료 목록 (selectbox용)
+     * @return
+     */
+    @Override
+    public List<StorageFeeSelectBoxDto> findAllStorageFees() {
+        return queryFactory
+                .select(Projections.constructor(StorageFeeSelectBoxDto.class
+                        , storageFee.id
+                        , storageFee.name
+                ))
+                .from(storageFee)
+                .orderBy(storageFee.id.asc())
+                .fetch()
+                ;
     }
 }

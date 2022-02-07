@@ -133,4 +133,14 @@ public class StorageFeeController {
     private Link getListLink() {
         return linkTo(methodOn(StorageFeeController.class).searchStorageFees(null)).withRel("list");
     }
+
+    /**
+     * 보관료 목록(selectbox용)
+     * @return
+     */
+    @GetMapping("/storageFee/allCodes")
+    public ResponseEntity storageFeeAllCodes() {
+        List<StorageFeeSelectBoxDto> allStorageFees = storageFeeService.getAllStorageFees();
+        return ResponseEntity.ok().body(allStorageFees);
+    }
 }
