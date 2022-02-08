@@ -53,16 +53,26 @@ public class CustomerItemServiceImpl implements CustomerItemService {
         StorageFee storageFee = this.getStorageFee(request.getStorageFeeId());
 
         //중복체크
-        CustomerItem existedCustomItem = customerItemRepository.findByCustomerAndItem(customer, item);
-        if (existedCustomItem != null) {
-            throw new DuplicatedDataException("이미 등록된 거래처/품목 정보가 존재합니다.");
-        }
+        checkDuplicatedIfCreate(customer, item);
 
         //Insert
         CustomerItem newCustomerItem = new CustomerItem(customer, item, storageFee);
         CustomerItem savedCustomerItem = customerItemRepository.save(newCustomerItem);
 
         return customerItemRepository.findDtoById(savedCustomerItem.getId());
+    }
+
+
+    /**
+     * 생성시 중복체크
+     * @param customer
+     * @param item
+     */
+    private void checkDuplicatedIfCreate(Customer customer, Item item) {
+        CustomerItem existedCustomItem = customerItemRepository.findByCustomerAndItem(customer, item);
+        if (existedCustomItem != null) {
+            throw new DuplicatedDataException("이미 등록된 거래처/품목 정보가 존재합니다.");
+        }
     }
 
 
@@ -75,19 +85,13 @@ public class CustomerItemServiceImpl implements CustomerItemService {
     @Override
     public CustomerItemDto update(CustomerItemSaveRequestDto request) {
 
-        CustomerItem savedCustomerItem = customerItemRepository.findById(request.getId())
-                .orElseThrow(() -> new NoSuchDataException("존재하지 않는 거래처별 품목정보입니다."));
-
-
+        CustomerItem savedCustomerItem = getCustomerItem(request.getId());
         Customer customer = this.getCustomer(request.getCustomerId());
         Item item = this.getItem(request.getItemId());
         StorageFee storageFee = this.getStorageFee(request.getStorageFeeId());
 
         //중복체크
-        CustomerItem existedCustomItem = customerItemRepository.findByCustomerAndItem(customer, item);
-        if (existedCustomItem != null && existedCustomItem.getId() != request.getId()) {
-            throw new DuplicatedDataException("이미 등록된 거래처/품목 정보가 존재합니다.");
-        }
+        checkDuplicatedIfUpdate(request, customer, item);
 
         //Update
         savedCustomerItem.changeCustomerItem(customer, item, storageFee);
@@ -95,8 +99,31 @@ public class CustomerItemServiceImpl implements CustomerItemService {
         return customerItemRepository.findDtoById(savedCustomerItem.getId());
     }
 
-    private Customer getCustomer(long cusomterId) {
-        return customerRepository.findById(cusomterId).orElseThrow(() -> new NoSuchDataException("존재하지 않는 거래처ID 입니다."));
+    /**
+     * CUSTOMER_ITEM 조회
+     * @param id
+     * @return
+     */
+    private CustomerItem getCustomerItem(long id) {
+        return customerItemRepository.findById(id)
+                .orElseThrow(() -> new NoSuchDataException("존재하지 않는 거래처별 품목정보입니다."));
+    }
+
+    /**
+     * 수정시 중복체크
+     * @param request
+     * @param customer
+     * @param item
+     */
+    private void checkDuplicatedIfUpdate(CustomerItemSaveRequestDto request, Customer customer, Item item) {
+        CustomerItem existedCustomItem = customerItemRepository.findByCustomerAndItem(customer, item);
+        if (existedCustomItem != null && existedCustomItem.getId() != request.getId()) {
+            throw new DuplicatedDataException("이미 등록된 거래처/품목 정보가 존재합니다.");
+        }
+    }
+
+    private Customer getCustomer(long customerId) {
+        return customerRepository.findById(customerId).orElseThrow(() -> new NoSuchDataException("존재하지 않는 거래처ID 입니다."));
     }
 
     private Item getItem(long itemId) {
@@ -114,9 +141,7 @@ public class CustomerItemServiceImpl implements CustomerItemService {
     @Transactional
     @Override
     public void delete(long id) {
-        CustomerItem savedCustomerItem = customerItemRepository.findById(id)
-                .orElseThrow(() -> new NoSuchDataException("존재하지 않는 거래처별 품목정보입니다."));
-
+        CustomerItem savedCustomerItem = getCustomerItem(id);
         customerItemRepository.delete(savedCustomerItem);
     }
 
