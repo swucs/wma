@@ -1,7 +1,9 @@
 package com.sycoldstorage.wms.adapter.security;
 
 import com.sycoldstorage.wms.application.service.AdminService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -36,8 +39,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String jwt = authorizationHeader.replace("Bearer", "");
 
-        String userId = getUserId(jwt);
+        String userId = null;
+        try {
+            userId = getUserId(jwt);
+        } catch (ExpiredJwtException e) {
+            log.error(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("expiredToken");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("invalidToken");
+        }
+
+
         if (StringUtils.isEmpty(userId)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("invalidToken");
             return;
         }
 
@@ -57,17 +76,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @return
      */
     private String getUserId(String jwt) {
-        String userId = null;
-
-        try {
-            //ID추출
-            userId = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
-                    .parseClaimsJws(jwt).getBody()
-                    .getSubject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        String userId = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
+                        .parseClaimsJws(jwt).getBody()
+                        .getSubject();
 
         if (StringUtils.isEmpty(userId)) {
             return null;
