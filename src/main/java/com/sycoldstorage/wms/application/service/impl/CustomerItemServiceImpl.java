@@ -4,6 +4,7 @@ import com.sycoldstorage.wms.adapter.presentation.web.customerItem.CustomerItemD
 import com.sycoldstorage.wms.adapter.presentation.web.customerItem.CustomerItemSaveRequestDto;
 import com.sycoldstorage.wms.adapter.presentation.web.customerItem.SearchCustomerItemCondition;
 import com.sycoldstorage.wms.application.exception.DuplicatedDataException;
+import com.sycoldstorage.wms.application.exception.ForeignKeyConstraintException;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.CustomerItemService;
 import com.sycoldstorage.wms.domain.customer.Customer;
@@ -14,9 +15,12 @@ import com.sycoldstorage.wms.domain.item.Item;
 import com.sycoldstorage.wms.domain.item.ItemRepository;
 import com.sycoldstorage.wms.domain.storageFee.StorageFee;
 import com.sycoldstorage.wms.domain.storageFee.StorageFeeRepository;
+import com.sycoldstorage.wms.domain.warehousing.WarehousingDetail;
+import com.sycoldstorage.wms.domain.warehousing.WarehousingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -28,6 +32,7 @@ public class CustomerItemServiceImpl implements CustomerItemService {
     private final CustomerRepository customerRepository;
     private final ItemRepository itemRepository;
     private final StorageFeeRepository storageFeeRepository;
+    private final WarehousingRepository warehousingRepository;
 
     /**
      * 거래처별 품목 조회
@@ -142,7 +147,27 @@ public class CustomerItemServiceImpl implements CustomerItemService {
     @Override
     public void delete(long id) {
         CustomerItem savedCustomerItem = getCustomerItem(id);
+
+        //입출고 내역
+        Long customerId = savedCustomerItem.getCustomer().getId();
+        Long itemId = savedCustomerItem.getItem().getId();
+
+        //입출고내역 체크
+        checkExistingWarehousingDetail(customerId, itemId);
+
         customerItemRepository.delete(savedCustomerItem);
+    }
+
+    /**
+     * 입출고내역 체크
+     * @param customerId
+     * @param itemId
+     */
+    private void checkExistingWarehousingDetail(Long customerId, Long itemId) {
+        List<WarehousingDetail> warehousingDetails = warehousingRepository.findWarehousingDetails(customerId, itemId);
+        if (!CollectionUtils.isEmpty(warehousingDetails)) {
+            throw new ForeignKeyConstraintException("입출고 내역이 존재하여 삭제할 수 없습니다.");
+        }
     }
 
 }

@@ -50,7 +50,7 @@ public class WarehousingServiceImpl implements WarehousingService {
      */
     @Override
     public List<WarehousingDetailDto> getWarehousingDetails(long warehousingId) {
-        return warehousingRepository.findWarehousingDetails(warehousingId);
+        return warehousingRepository.findWarehousingDetailDtos(warehousingId);
     }
 
 

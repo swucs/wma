@@ -3,6 +3,7 @@ package com.sycoldstorage.wms.adapter.presentation.web.customerItem;
 
 import com.sycoldstorage.wms.adapter.presentation.web.customer.CustomerDto;
 import com.sycoldstorage.wms.application.exception.DuplicatedDataException;
+import com.sycoldstorage.wms.application.exception.ForeignKeyConstraintException;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.CustomerItemService;
 import lombok.RequiredArgsConstructor;
@@ -150,6 +151,9 @@ public class CustomerItemController {
         } catch (NoSuchDataException e) {
             //데이터가 없는 경우
             return ResponseEntity.notFound().build();
+        } catch (ForeignKeyConstraintException e) {
+            //입출고내역이 존재하는 경우
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
         }
 
         EntityModel<CustomerDto> entityModel = EntityModel.of(CustomerDto.builder().id(id).build())

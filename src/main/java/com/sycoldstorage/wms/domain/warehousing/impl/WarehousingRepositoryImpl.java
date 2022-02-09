@@ -11,7 +11,9 @@ import com.sycoldstorage.wms.adapter.presentation.web.statistics.SearchCustomerI
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.SearchWarehousingCondition;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDetailDto;
 import com.sycoldstorage.wms.adapter.presentation.web.warehousing.WarehousingDto;
+import com.sycoldstorage.wms.domain.warehousing.Warehousing;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingCustom;
+import com.sycoldstorage.wms.domain.warehousing.WarehousingDetail;
 import com.sycoldstorage.wms.domain.warehousing.WarehousingType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -147,7 +149,7 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
      * @return
      */
     @Override
-    public List<WarehousingDetailDto> findWarehousingDetails(Long warehousingId) {
+    public List<WarehousingDetailDto> findWarehousingDetailDtos(long warehousingId) {
 
         return queryFactory
                 .select(Projections.constructor(WarehousingDetailDto.class
@@ -169,6 +171,37 @@ public class WarehousingRepositoryImpl implements WarehousingCustom {
                 .orderBy(warehousingDetail.id.asc())
                 .fetch();
 
+    }
+
+    /**
+     * 거래처ID와 품목ID로 입출고내역 조회
+     * @param customerId
+     * @param itemId
+     * @return
+     */
+    @Override
+    public List<WarehousingDetail> findWarehousingDetails(long customerId, long itemId) {
+        return queryFactory
+                .selectFrom(warehousingDetail)
+                .join(warehousingDetail.warehousing, warehousing)
+                .where(warehousing.customer.id.eq(customerId)
+                        .and(warehousingDetail.item.id.eq(itemId)))
+                .fetch();
+    }
+
+    /**
+     * 품목ID로 입출고 조회
+     * @param itemId
+     * @return
+     */
+    @Override
+    public List<Warehousing> findWarehousingDetails(long itemId) {
+        return queryFactory
+                .select(warehousing)
+                .from(warehousingDetail)
+                .join(warehousingDetail.warehousing, warehousing)
+                .where((warehousingDetail.item.id.eq(itemId)))
+                .fetch();
     }
 
 

@@ -1,5 +1,6 @@
 package com.sycoldstorage.wms.adapter.presentation.web.item;
 
+import com.sycoldstorage.wms.application.exception.ForeignKeyConstraintException;
 import com.sycoldstorage.wms.application.exception.NoSuchDataException;
 import com.sycoldstorage.wms.application.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -7,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -123,6 +126,33 @@ public class ItemController {
 
         return ResponseEntity.ok(entityModel);
     }
+
+
+    /**
+     * 거래처정보 삭제
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/item/{id}")
+    public ResponseEntity deleteItem(@PathVariable long id) {
+        try {
+            itemService.deleteItem(id);
+        } catch (NoSuchDataException e) {
+            //데이터가 없는 경우
+            return ResponseEntity.notFound().build();
+        } catch (ForeignKeyConstraintException e) {
+            //거래처별품목 또는 입출고내역이 존재하는 경우
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
+        }
+
+        EntityModel<ItemDto> entityModel = EntityModel.of(ItemDto.builder().id(id).unitWeight(0d).build())
+                .add(getListLink())
+                .add(Link.of("/docs/index.html#resources-item-delete").withRel("profile"));
+
+        return ResponseEntity.ok(entityModel);
+
+    }
+
 
     /**
      * 에러 발생시 badRequest처리

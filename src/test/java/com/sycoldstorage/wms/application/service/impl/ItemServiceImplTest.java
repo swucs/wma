@@ -3,8 +3,10 @@ package com.sycoldstorage.wms.application.service.impl;
 import com.sycoldstorage.wms.adapter.presentation.web.item.ItemDto;
 import com.sycoldstorage.wms.adapter.presentation.web.item.SearchItemCondition;
 import com.sycoldstorage.wms.application.service.ItemService;
+import com.sycoldstorage.wms.domain.customerItem.CustomerItemRepository;
 import com.sycoldstorage.wms.domain.item.Item;
 import com.sycoldstorage.wms.domain.item.ItemRepository;
+import com.sycoldstorage.wms.domain.warehousing.WarehousingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,11 +33,17 @@ class ItemServiceImplTest {
     @Mock
     ItemRepository itemRepository;
 
+    @Mock
+    CustomerItemRepository customerItemRepository;
+
+    @Mock
+    WarehousingRepository warehousingRepository;
+
     ItemService itemService;
 
     @BeforeEach
     void setup() {
-        itemService = new ItemServiceImpl(itemRepository);
+        itemService = new ItemServiceImpl(itemRepository, customerItemRepository, warehousingRepository);
     }
 
     @Test
